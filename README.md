@@ -1,5 +1,5 @@
-# React IoC
-__Hierarchical Dependency Injection for React__
+# React IoC with Immer
+__Hierarchical Dependency Injection for React __
 
 [![Build Status](https://travis-ci.org/gnaeus/react-ioc.svg?branch=master)](https://travis-ci.org/gnaeus/react-ioc)
 [![Coverage Status](https://coveralls.io/repos/gnaeus/react-ioc/badge.svg?branch=master)](https://coveralls.io/github/gnaeus/react-ioc?branch=master)
@@ -15,7 +15,9 @@ __Hierarchical Dependency Injection for React__
  * ES6, CommonJS and UMD bundles
  * Declarations for TypeScript and Flow
  * Type Safe even in JavaScript (with [TypeScript `--checkJs` mode](https://github.com/Microsoft/TypeScript/wiki/Type-Checking-JavaScript-Files))
- * Tiny: only 1.1 KB (min+gzip)
+ 
+## Differenece with original project [React-Ioc](https://github.com/gnaeus/react-ioc) 
+ * Instead of MobX using immutable state manager based on [Immer](https://github.com/immerjs/immer)
 
 ### Requirements: React 16.6 or greater, ES6 Map or Map polyfill.
 
