@@ -1,27 +1,27 @@
-import { Context } from "react";
+import { Context } from 'react';
 
 type ClassDecorator = <T extends Function>(target: T) => T;
 type Constructor<T> = new (...args: any[]) => T;
 type Token = Function | Object | string | symbol;
 type Definition = Function | [Function] | [Token, Function];
 type Provider = {
-  /**
-   * Register dependency injection bindings in scope of decorated class
-   * @param definitions Dependency injection configuration
-   * @returns Decorated constructor
-   */
-  register(...definitions: Definition[]): void;
+	/**
+	 * Register dependency injection bindings in scope of decorated class
+	 * @param definitions Dependency injection configuration
+	 * @returns Decorated constructor
+	 */
+	register(...definitions: Definition[]): void;
 };
 type ProviderMixin<T> = T &
-  Provider & {
-    contextType: typeof InjectorContext;
-    WrappedComponent: T;
-  };
+	Provider & {
+		contextType: typeof InjectorContext;
+		WrappedComponent: T;
+	};
 
-declare module "react" {
-  namespace Component {
-    function register(...definitions: Definition[]): void;
-  }
+declare module 'react' {
+	namespace Component {
+		function register(...definitions: Definition[]): void;
+	}
 }
 
 export declare const InjectorContext: Context<Function>;
@@ -32,9 +32,7 @@ export declare const InjectorContext: Context<Function>;
  * @param definitions Dependency injection configuration
  * @returns Decorator or HOC
  */
-export declare function provider(
-  ...definitions: Definition[]
-): <T extends Function>(target: T) => ProviderMixin<T>;
+export declare function provider(...definitions: Definition[]): <T extends Function>(target: T) => ProviderMixin<T>;
 
 /**
  * Decorator that lazily registers class in scope of specified Provider.
@@ -42,10 +40,7 @@ export declare function provider(
  * @param biding Dependency injection binding
  * @returns Decorator
  */
-export declare function registerIn(
-  getProvider: () => Provider,
-  biding?: Function
-): <T extends Function>(target: T) => T;
+export declare function registerIn(getProvider: () => Provider, biding?: Function): <T extends Function>(target: T) => T;
 
 /**
  * Property decorator that resolves a class instance
@@ -68,10 +63,7 @@ export declare function inject(target: Object, key: string | symbol): void;
  * @param token Dependency injection token
  * @returns Resolved class instance
  */
-export declare function inject<T>(
-  target: Object,
-  token: Constructor<T> | Token
-): T;
+export declare function inject<T>(target: Object, token: Constructor<T> | Token): T;
 
 /**
  * React hook for resolving a class instance that registered by some Provider in hierarchy.
@@ -87,9 +79,7 @@ export declare function useInstance<T>(token: Constructor<T> | Token): T;
  * @param tokens Dependency injection tokens
  * @returns Resolved class instances
  */
-export declare function useInstances<T extends [any, ...any[]]>(
-  ...tokens: { [K in keyof T]: Constructor<T[K]> | Token }
-): T;
+export declare function useInstances<T extends [any, ...any[]]>(...tokens: { [K in keyof T]: Constructor<T[K]> | Token }): T;
 
 /**
  * Bind dependency to specified class.
@@ -117,10 +107,7 @@ export declare function toFactory(factory: () => any): Function;
  * @param factory Factory
  * @returns Dependency resolver
  */
-export declare function toFactory<T extends [any, ...any[]]>(
-  deps: { [K in keyof T]: Constructor<T[K]> | Token },
-  factory: (...args: T) => any
-): Function;
+export declare function toFactory<T extends [any, ...any[]]>(deps: { [K in keyof T]: Constructor<T[K]> | Token }, factory: (...args: T) => any): Function;
 
 /**
  * Bind dependency to existing instance located by token.
