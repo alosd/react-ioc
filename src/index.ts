@@ -1,6 +1,3 @@
-import { inject } from './inject';
-import { provider, registerIn } from './provider';
-export { InjectorContext } from './injector';
-export { toClass, toFactory, toExisting, toValue } from './bindings';
-export { useInstance, useInstances } from './hooks';
-export { inject, provider, registerIn, inject as Inject, provider as Provider, registerIn as RegisterIn };
+export { InjectedService, inject, provider, registerIn, Inject, Provider, RegisterIn, toClass, toExisting, toFactory, toValue, useInstance, useInstances } from './ioc';
+export { ImmutableService, action, store } from './services';
+export { original, enableES5, enableMapSet } from 'immer';

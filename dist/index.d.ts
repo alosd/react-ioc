@@ -117,3 +117,32 @@ export declare function toFactory<T extends [any, ...any[]]>(deps: { [K in keyof
 export declare function toExisting(token: Token): Function;
 
 export { inject as Inject, provider as Provider, registerIn as RegisterIn };
+
+export abstract class InjectedService {
+	abstract initProvider(refresh: () => void): void;
+}
+export declare abstract class ImmutableService {
+	protected RefreshContext(): void;
+
+	protected waitForAsync<T>(promise: Promise<T>): Promise<T>;
+}
+/**
+ * Property Decorator convert property to immutable
+ * Changes for such property allowed only from methods marked with @action or @asyncAction decorator
+ */
+export declare function store(): (target: ImmutableService, propertyKey: string) => void;
+
+/**
+ * Method decorator allow to change properties marked with @store within method.
+ * After method execution, the React Context in which the service is located will be updated
+ */
+export function action(): (target: ImmutableService, propertyKey: string, descriptor: PropertyDescriptor) => void;
+
+//export function asyncAction():(target: ImmutableService, propertyKey: string, descriptor: PropertyDescriptor)=>void;
+
+/** Get the underlying object from immutable value */
+export declare function original<T>(value: T): T | undefined;
+
+export declare function enableES5(): void;
+
+export declare function enableMapSet(): void;

@@ -35,7 +35,7 @@ const terserPlugin = () =>
 
 const es6 = {
 	input: 'src/index.ts',
-	external: ['react', 'hoist-non-react-statics', 'reflect-metadata', 'tslib'],
+	external: ['react', 'hoist-non-react-statics', 'reflect-metadata', 'tslib', 'immer'],
 	output: {
 		file: pkg.module,
 		format: 'es',
@@ -45,7 +45,7 @@ const es6 = {
 
 const cjs = {
 	input: 'src/index.ts',
-	external: ['react', 'hoist-non-react-statics', 'reflect-metadata', 'tslib'],
+	external: ['react', 'hoist-non-react-statics', 'reflect-metadata', 'tslib', 'immer'],
 	output: {
 		file: pkg.main,
 		format: 'cjs',

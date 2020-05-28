@@ -1171,6 +1171,44 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	}
 
+	function __awaiter(thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	}
+
+	function __generator(thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	}
+
 	/**
 	 * @internal
 	 */
@@ -1893,6 +1931,11 @@
 	    });
 	}
 
+	var InjectedService = /** @class */ (function () {
+	    function InjectedService() {
+	    }
+	    return InjectedService;
+	}());
 	/**
 	 * Decorator or HOC that register dependency injection bindings
 	 * in scope of decorated class
@@ -1916,6 +1959,14 @@
 	                _this._instanceMap = new Map();
 	                return _this;
 	            }
+	            Provider.prototype.componentDidMount = function () {
+	                var _this = this;
+	                this._instanceMap.forEach(function (instance) {
+	                    if (instance instanceof InjectedService) {
+	                        instance.initProvider(function () { return _this.setState({ injector: _this }); });
+	                    }
+	                });
+	            };
 	            Provider.prototype.componentWillUnmount = function () {
 	                this._instanceMap.forEach(function (instance) {
 	                    if (isObject(instance) && isFunction(instance.dispose)) {
@@ -2016,19 +2067,208 @@
 	        (ref.current = tokens.map(function (token) { return getInstance(injector, token); })));
 	}
 
+	function n$1(n){for(var t=arguments.length,r=Array(t>1?t-1:0),e=1;e<t;e++)r[e-1]=arguments[e];if("production"!==process.env.NODE_ENV){var i=L[n],o=i?"function"==typeof i?i.apply(null,r):i:"unknown error nr: "+n;throw Error("[Immer] "+o)}throw Error("[Immer] minified error nr: "+n+(r.length?" "+r.join(","):"")+". Find the full error at: https://bit.ly/3cXEKWf")}function t$1(n){return !!n&&!!n[G]}function r$1(n){return !!n&&(function(n){if(!n||"object"!=typeof n)return !1;var t=Object.getPrototypeOf(n);return !t||t===Object.prototype}(n)||Array.isArray(n)||!!n[B]||!!n.constructor[B]||c$1(n)||s(n))}function e$1(n){if(n&&n[G])return n[G].t}function i(n,t,r){void 0===r&&(r=!1),0===o(n)?(r?Object.keys:Q)(n).forEach((function(r){return t(r,n[r],n)})):n.forEach((function(r,e){return t(e,r,n)}));}function o(n){var t=n[G];return t?t.i>3?t.i-4:t.i:Array.isArray(n)?1:c$1(n)?2:s(n)?3:0}function u(n,t){return 2===o(n)?n.has(t):Object.prototype.hasOwnProperty.call(n,t)}function a(n,t){return 2===o(n)?n.get(t):n[t]}function f$1(n,t){return n===t?0!==n||1/n==1/t:n!=n&&t!=t}function c$1(n){return U&&n instanceof Map}function s(n){return W&&n instanceof Set}function v$1(n){return n.o||n.t}function p$1(t,r){if(void 0===r&&(r=!1),Array.isArray(t))return t.slice();var e=Object.create(Object.getPrototypeOf(t));return i(t,(function(i){if(i!==G){var o=Object.getOwnPropertyDescriptor(t,i),u=o.value;o.get&&(r||n$1(1),u=o.get.call(t)),o.enumerable?e[i]=u:Object.defineProperty(e,i,{value:u,writable:!0,configurable:!0});}})),e}function d$1(n,e){t$1(n)||h$1(n)||!r$1(n)||(o(n)>1&&(n.set=n.add=n.clear=n.delete=l$1),Object.freeze(n),e&&i(n,(function(n,t){return d$1(t,!0)}),!0));}function l$1(){n$1(2);}function h$1(n){return null==n||"object"!=typeof n||Object.isFrozen(n)}function y$1(t){var r=V[t];return r||n$1("production"!==process.env.NODE_ENV?18:19,t),r}function b$1(n,t){V[n]=t;}function m$1(){return "production"===process.env.NODE_ENV||K||n$1(0),K}function _(n,t){t&&(y$1("Patches"),n.u=[],n.s=[],n.v=t);}function j(n){O(n),n.p.forEach(w$1),n.p=null;}function O(n){n===K&&(K=n.l);}function g$1(n){return K={p:[],l:K,h:n,m:!0,_:0}}function w$1(n){var t=n[G];0===t.i||1===t.i?t.j():t.O=!0;}function S(t,e){e._=e.p.length;var i=e.p[0],o=void 0!==t&&t!==i;return e.h.g||y$1("ES5").S(e,t,o),o?(i[G].P&&(j(e),n$1(4)),r$1(t)&&(t=P(e,t),e.l||A$1(e,t)),e.u&&y$1("Patches").M(i[G],t,e.u,e.s)):t=P(e,i,[]),j(e),e.u&&e.v(e.u,e.s),t!==q$1?t:void 0}function P(n,t,r){if(h$1(t))return t;var e=t[G];if(!e)return i(t,(function(i,o){return M(n,e,t,i,o,r)}),!0),t;if(e.A!==n)return t;if(!e.P)return A$1(n,e.t,!0),e.t;if(!e.I){e.I=!0,e.A._--;var o=4===e.i||5===e.i?e.o=p$1(e.k,!0):e.o;i(o,(function(t,i){return M(n,e,o,t,i,r)})),A$1(n,o,!1),r&&n.u&&y$1("Patches").R(e,r,n.u,n.s);}return e.o}function M(e,i,c,s,v,p){if("production"!==process.env.NODE_ENV&&v===c&&n$1(5),t$1(v)){var d=P(e,v,p&&i&&3!==i.i&&!u(i.D,s)?p.concat(s):void 0);if(h=s,y=d,2===(b=o(l=c))?l.set(h,y):3===b?(l.delete(h),l.add(y)):l[h]=y,!t$1(d))return;e.m=!1;}var l,h,y,b;if((!i||!f$1(v,a(i.t,s)))&&r$1(v)){if(!e.h.N&&e._<1)return;P(e,v),i&&i.A.l||A$1(e,v);}}function A$1(n,t,r){void 0===r&&(r=!1),n.h.N&&n.m&&d$1(t,r);}function x$1(n,t){var r=n[G],e=Reflect.getOwnPropertyDescriptor(r?v$1(r):n,t);return e&&e.value}function z$1(n){if(!n.P){if(n.P=!0,0===n.i||1===n.i){var t=n.o=p$1(n.t);i(n.p,(function(n,r){t[n]=r;})),n.p=void 0;}n.l&&z$1(n.l);}}function I(n){n.o||(n.o=p$1(n.t));}function E(n,t,r){var e=c$1(t)?y$1("MapSet").T(t,r):s(t)?y$1("MapSet").F(t,r):n.g?function(n,t){var r=Array.isArray(n),e={i:r?1:0,A:t?t.A:m$1(),P:!1,I:!1,D:{},l:t,t:n,k:null,p:{},o:null,j:null,C:!1},i=e,o=Y;r&&(i=[e],o=Z);var u=Proxy.revocable(i,o),a=u.revoke,f=u.proxy;return e.k=f,e.j=a,f}(t,r):y$1("ES5").J(t,r);return (r?r.A:m$1()).p.push(e),e}function k$1(n,t){n.g?z$1(t):y$1("ES5").K(t);}function R(){function e(n,t){var r=n[G];if(r&&!r.$){r.$=!0;var e=n[t];return r.$=!1,e}return n[t]}function o(n){n.P||(n.P=!0,n.l&&o(n.l));}function a(n){n.o||(n.o=c(n.t));}function c(n){var t=n&&n[G];if(t){t.$=!0;var r=p$1(t.k,!0);return t.$=!1,r}return p$1(n)}function s(n){for(var t=n.length-1;t>=0;t--){var r=n[t][G];if(!r.P)switch(r.i){case 5:l(r)&&o(r);break;case 4:d(r)&&o(r);}}}function d(n){for(var t=n.t,r=n.k,e=Object.keys(r),i=e.length-1;i>=0;i--){var o=e[i],a=t[o];if(void 0===a&&!u(t,o))return !0;var c=r[o],s=c&&c[G];if(s?s.t!==a:!f$1(c,a))return !0}return e.length!==Object.keys(t).length}function l(n){var t=n.k;if(t.length!==n.t.length)return !0;var r=Object.getOwnPropertyDescriptor(t,t.length-1);return !(!r||r.get)}function h(t){t.O&&n$1(3,JSON.stringify(v$1(t)));}var y={};b$1("ES5",{J:function(n,t){var u=Array.isArray(n),s=c(n);i(s,(function(t){!function(n,t,i){var u=y[t];u?u.enumerable=i:y[t]=u={enumerable:i,get:function(){return function(n,t){h(n);var i=e(v$1(n),t);return n.$?i:i===e(n.t,t)&&r$1(i)?(a(n),n.o[t]=E(n.A.h,i,n)):i}(this[G],t)},set:function(n){!function(n,t,r){if(h(n),n.D[t]=!0,!n.P){if(f$1(r,e(v$1(n),t)))return;o(n),a(n);}n.o[t]=r;}(this[G],t,n);}},Object.defineProperty(n,t,u);}(s,t,u||function(n,t){var r=Object.getOwnPropertyDescriptor(n,t);return !(!r||!r.enumerable)}(n,t));}));var p={i:u?5:4,A:t?t.A:m$1(),P:!1,$:!1,I:!1,D:{},l:t,t:n,k:s,o:null,O:!1,C:!1};return Object.defineProperty(s,G,{value:p,writable:!0}),s},K:o,S:function(n,r,e){n.p.forEach((function(n){n[G].$=!0;})),e?t$1(r)&&r[G].A===n&&s(n.p):(n.u&&function n(t){if(t&&"object"==typeof t){var r=t[G];if(r){var e=r.t,a=r.k,f=r.D,c=r.i;if(4===c)i(a,(function(t){t!==G&&(void 0!==e[t]||u(e,t)?f[t]||n(a[t]):(f[t]=!0,o(r)));})),i(e,(function(n){void 0!==a[n]||u(a,n)||(f[n]=!1,o(r));}));else if(5===c){if(l(r)&&(o(r),f.length=!0),a.length<e.length)for(var s=a.length;s<e.length;s++)f[s]=!1;else for(var v=e.length;v<a.length;v++)f[v]=!0;for(var p=Math.min(a.length,e.length),d=0;d<p;d++)void 0===f[d]&&n(a[d]);}}}}(n.p[0]),s(n.p));}});}function N(){function t(n,t){function r(){this.constructor=n;}u(n,t),n.prototype=(r.prototype=t.prototype,new r);}function e(n){n.o||(n.D=new Map,n.o=new Map(n.t));}function i(n){n.o||(n.o=new Set,n.t.forEach((function(t){if(r$1(t)){var e=E(n.A.h,t,n);n.p.set(t,e),n.o.add(e);}else n.o.add(t);})));}function o(t){t.O&&n$1(3,JSON.stringify(v$1(t)));}var u=function(n,t){return (u=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(n,t){n.__proto__=t;}||function(n,t){for(var r in t)t.hasOwnProperty(r)&&(n[r]=t[r]);})(n,t)},a=function(){function n(n,t){return this[G]={i:2,l:t,A:t?t.A:m$1(),P:!1,I:!1,o:void 0,D:void 0,t:n,k:this,C:!1,O:!1},this}t(n,Map);var i=n.prototype;return Object.defineProperty(i,"size",{get:function(){return v$1(this[G]).size}}),i.has=function(n){return v$1(this[G]).has(n)},i.set=function(n,t){var r=this[G];return o(r),v$1(r).get(n)!==t&&(e(r),k$1(r.A.h,r),r.D.set(n,!0),r.o.set(n,t),r.D.set(n,!0)),this},i.delete=function(n){if(!this.has(n))return !1;var t=this[G];return o(t),e(t),k$1(t.A.h,t),t.D.set(n,!1),t.o.delete(n),!0},i.clear=function(){var n=this[G];return o(n),e(n),k$1(n.A.h,n),n.D=new Map,n.o.clear()},i.forEach=function(n,t){var r=this;v$1(this[G]).forEach((function(e,i){n.call(t,r.get(i),i,r);}));},i.get=function(n){var t=this[G];o(t);var i=v$1(t).get(n);if(t.I||!r$1(i))return i;if(i!==t.t.get(n))return i;var u=E(t.A.h,i,t);return e(t),t.o.set(n,u),u},i.keys=function(){return v$1(this[G]).keys()},i.values=function(){var n,t=this,r=this.keys();return (n={})[H]=function(){return t.values()},n.next=function(){var n=r.next();return n.done?n:{done:!1,value:t.get(n.value)}},n},i.entries=function(){var n,t=this,r=this.keys();return (n={})[H]=function(){return t.entries()},n.next=function(){var n=r.next();if(n.done)return n;var e=t.get(n.value);return {done:!1,value:[n.value,e]}},n},i[H]=function(){return this.entries()},n}(),f=function(){function n(n,t){return this[G]={i:3,l:t,A:t?t.A:m$1(),P:!1,I:!1,o:void 0,t:n,k:this,p:new Map,O:!1,C:!1},this}t(n,Set);var r=n.prototype;return Object.defineProperty(r,"size",{get:function(){return v$1(this[G]).size}}),r.has=function(n){var t=this[G];return o(t),t.o?!!t.o.has(n)||!(!t.p.has(n)||!t.o.has(t.p.get(n))):t.t.has(n)},r.add=function(n){var t=this[G];return o(t),this.has(n)||(i(t),k$1(t.A.h,t),t.o.add(n)),this},r.delete=function(n){if(!this.has(n))return !1;var t=this[G];return o(t),i(t),k$1(t.A.h,t),t.o.delete(n)||!!t.p.has(n)&&t.o.delete(t.p.get(n))},r.clear=function(){var n=this[G];return o(n),i(n),k$1(n.A.h,n),n.o.clear()},r.values=function(){var n=this[G];return o(n),i(n),n.o.values()},r.entries=function(){var n=this[G];return o(n),i(n),n.o.entries()},r.keys=function(){return this.values()},r[H]=function(){return this.values()},r.forEach=function(n,t){for(var r=this.values(),e=r.next();!e.done;)n.call(t,e.value,e.value,this),e=r.next();},n}();b$1("MapSet",{T:function(n,t){return new a(n,t)},F:function(n,t){return new f(n,t)}});}var J,K,$="undefined"!=typeof Symbol&&"symbol"==typeof Symbol("x"),U="undefined"!=typeof Map,W="undefined"!=typeof Set,X="undefined"!=typeof Proxy&&void 0!==Proxy.revocable&&"undefined"!=typeof Reflect,q$1=$?Symbol("immer-nothing"):((J={})["immer-nothing"]=!0,J),B=$?Symbol("immer-draftable"):"__$immer_draftable",G=$?Symbol("immer-state"):"__$immer_state",H="undefined"!=typeof Symbol&&Symbol.iterator||"@@iterator",L={0:"Illegal state",1:"Immer drafts cannot have computed properties",2:"This object has been frozen and should not be mutated",3:function(n){return "Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? "+n},4:"An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",5:"Immer forbids circular references",6:"The first or second argument to `produce` must be a function",7:"The third argument to `produce` must be a function or undefined",8:"First argument to `createDraft` must be a plain object, an array, or an immerable object",9:"First argument to `finishDraft` must be a draft returned by `createDraft`",10:"The given draft is already finalized",11:"Object.defineProperty() cannot be used on an Immer draft",12:"Object.setPrototypeOf() cannot be used on an Immer draft",13:"Immer only supports deleting array indices",14:"Immer only supports setting array indices and the 'length' property",15:function(n){return "Cannot apply patch, path doesn't resolve: "+n},16:'Sets cannot have "replace" patches.',17:function(n){return "Unsupported patch operation: "+n},18:function(n){return "The plugin for '"+n+"' has not been loaded into Immer. To enable the plugin, import and call `enable"+n+"()` when initializing your application."},19:function(n){return "plugin not loaded: "+n},20:"Cannot use proxies if Proxy, Proxy.revocable or Reflect are not available"},Q="undefined"!=typeof Reflect&&Reflect.ownKeys?Reflect.ownKeys:void 0!==Object.getOwnPropertySymbols?function(n){return Object.getOwnPropertyNames(n).concat(Object.getOwnPropertySymbols(n))}:Object.getOwnPropertyNames,V={},Y={get:function(n,t){if(t===G)return n;var e=n.p;if(!n.P&&u(e,t))return e[t];var i=v$1(n)[t];if(n.I||!r$1(i))return i;if(n.P){if(i!==x$1(n.t,t))return i;e=n.o;}return e[t]=E(n.A.h,i,n)},has:function(n,t){return t in v$1(n)},ownKeys:function(n){return Reflect.ownKeys(v$1(n))},set:function(n,t,r){if(!n.P){var e=x$1(n.t,t);if(r?f$1(e,r)||r===n.p[t]:f$1(e,r)&&t in n.t)return !0;I(n),z$1(n);}return n.D[t]=!0,n.o[t]=r,!0},deleteProperty:function(n,t){return void 0!==x$1(n.t,t)||t in n.t?(n.D[t]=!1,I(n),z$1(n)):n.D[t]&&delete n.D[t],n.o&&delete n.o[t],!0},getOwnPropertyDescriptor:function(n,t){var r=v$1(n),e=Reflect.getOwnPropertyDescriptor(r,t);return e&&(e.writable=!0,e.configurable=1!==n.i||"length"!==t),e},defineProperty:function(){n$1(11);},getPrototypeOf:function(n){return Object.getPrototypeOf(n.t)},setPrototypeOf:function(){n$1(12);}},Z={};i(Y,(function(n,t){Z[n]=function(){return arguments[0]=arguments[0][0],t.apply(this,arguments)};})),Z.deleteProperty=function(t,r){return "production"!==process.env.NODE_ENV&&isNaN(parseInt(r))&&n$1(13),Y.deleteProperty.call(this,t[0],r)},Z.set=function(t,r,e){return "production"!==process.env.NODE_ENV&&"length"!==r&&isNaN(parseInt(r))&&n$1(14),Y.set.call(this,t[0],r,e,t[0])};var nn=function(){function e(n){this.g=X,this.N="production"!==process.env.NODE_ENV,"boolean"==typeof(null==n?void 0:n.useProxies)&&this.setUseProxies(n.useProxies),"boolean"==typeof(null==n?void 0:n.autoFreeze)&&this.setAutoFreeze(n.autoFreeze),this.produce=this.produce.bind(this),this.produceWithPatches=this.produceWithPatches.bind(this);}var i=e.prototype;return i.produce=function(t,e,i){if("function"==typeof t&&"function"!=typeof e){var o=e;e=t;var u=this;return function(n){var t=this;void 0===n&&(n=o);for(var r=arguments.length,i=Array(r>1?r-1:0),a=1;a<r;a++)i[a-1]=arguments[a];return u.produce(n,(function(n){var r;return (r=e).call.apply(r,[t,n].concat(i))}))}}var a;if("function"!=typeof e&&n$1(6),void 0!==i&&"function"!=typeof i&&n$1(7),r$1(t)){var f=g$1(this),c=E(this,t,void 0),s=!0;try{a=e(c),s=!1;}finally{s?j(f):O(f);}return "undefined"!=typeof Promise&&a instanceof Promise?a.then((function(n){return _(f,i),S(n,f)}),(function(n){throw j(f),n})):(_(f,i),S(a,f))}if((a=e(t))!==q$1)return void 0===a&&(a=t),this.N&&d$1(a,!0),a},i.produceWithPatches=function(n,t){var r,e,i=this;return "function"==typeof n?function(t){for(var r=arguments.length,e=Array(r>1?r-1:0),o=1;o<r;o++)e[o-1]=arguments[o];return i.produceWithPatches(t,(function(t){return n.apply(void 0,[t].concat(e))}))}:[this.produce(n,t,(function(n,t){r=n,e=t;})),r,e]},i.createDraft=function(t){r$1(t)||n$1(8);var e=g$1(this),i=E(this,t,void 0);return i[G].C=!0,O(e),i},i.finishDraft=function(t,r){var e=t&&t[G];"production"!==process.env.NODE_ENV&&(e&&e.C||n$1(9),e.I&&n$1(10));var i=e.A;return _(i,r),S(void 0,i)},i.setAutoFreeze=function(n){this.N=n;},i.setUseProxies=function(t){X||n$1(20),this.g=t;},i.applyPatches=function(n,r){var e;for(e=r.length-1;e>=0;e--){var i=r[e];if(0===i.path.length&&"replace"===i.op){n=i.value;break}}var o=y$1("Patches").U;return t$1(n)?o(n,r):this.produce(n,(function(n){return o(n,r.slice(e+1))}))},e}(),tn=new nn,en=tn.produceWithPatches.bind(tn),on=tn.setAutoFreeze.bind(tn),un=tn.setUseProxies.bind(tn),an=tn.applyPatches.bind(tn),fn=tn.createDraft.bind(tn),cn=tn.finishDraft.bind(tn);
+
+	var PROVIDER = (typeof Symbol === 'function' ? Symbol() : '__store__');
+	var STORES = (typeof Symbol === 'function' ? Symbol() : '__stores__');
+	var REFRESH = (typeof Symbol === 'function' ? Symbol() : '__refresh__');
+	/**
+	 * @internal
+	 */
+	var MutationProvider = /** @class */ (function () {
+	    function MutationProvider(service) {
+	        this.count = 0;
+	        this.service = service;
+	    }
+	    MutationProvider.prototype.start = function (inc) {
+	        var _this = this;
+	        var _a;
+	        if (inc === void 0) { inc = true; }
+	        if (this.count == 0) {
+	            var draft_1 = (this.draft = (_a = this.draft) !== null && _a !== void 0 ? _a : fn(this.service));
+	            this.service[STORES].forEach(function (x) {
+	                _this.service[x] = draft_1[x];
+	            });
+	        }
+	        if (inc)
+	            this.count++;
+	    };
+	    MutationProvider.prototype.finish = function (refresh, dec) {
+	        var _this = this;
+	        if (refresh === void 0) { refresh = true; }
+	        if (dec === void 0) { dec = true; }
+	        if (this.count == 0) {
+	            console.warn('the finish method must be called after corresponding start method');
+	        }
+	        else {
+	            if (dec)
+	                this.count--;
+	            if (this.count == 0) {
+	                var draft_2 = this.draft;
+	                if (draft_2) {
+	                    this.service[STORES].forEach(function (x) {
+	                        draft_2[x] = _this.service[x];
+	                    });
+	                    var newstate_1 = cn(draft_2);
+	                    this.service[STORES].forEach(function (x) {
+	                        _this.service[x] = newstate_1[x];
+	                    });
+	                    this.draft = undefined;
+	                }
+	                else {
+	                    {
+	                        logError('previous state is absent');
+	                    }
+	                }
+	            }
+	        }
+	        if (refresh) {
+	            this.service.RefreshContext();
+	        }
+	    };
+	    return MutationProvider;
+	}());
+	// @ts-ignore
+	var ImmutableService = /** @class */ (function (_super) {
+	    __extends(ImmutableService, _super);
+	    function ImmutableService() {
+	        var _a;
+	        var _this = _super.call(this) || this;
+	        _this[STORES] = (_a = _this[STORES]) !== null && _a !== void 0 ? _a : [];
+	        _this[B] = true;
+	        _this[PROVIDER] = new MutationProvider(_this);
+	        return _this;
+	    }
+	    // @ts-ignore
+	    ImmutableService.prototype.initProvider = function (refresh) {
+	        this[REFRESH] = refresh;
+	        this[PROVIDER].start();
+	        this[PROVIDER].finish();
+	    };
+	    ImmutableService.prototype.RefreshContext = function () {
+	        if (this[REFRESH]) {
+	            this[REFRESH]();
+	        }
+	    };
+	    ImmutableService.prototype.waitForAsync = function (promise) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0:
+	                        this[PROVIDER].finish(true, false);
+	                        _a.label = 1;
+	                    case 1:
+	                        _a.trys.push([1, , 3, 4]);
+	                        return [4 /*yield*/, promise];
+	                    case 2: return [2 /*return*/, _a.sent()];
+	                    case 3:
+	                        this[PROVIDER].start(false);
+	                        return [7 /*endfinally*/];
+	                    case 4: return [2 /*return*/];
+	                }
+	            });
+	        });
+	    };
+	    return ImmutableService;
+	}(InjectedService));
+
+	/**
+	 * Property Decorator convert property to immutable
+	 * Changes for such property allowed only from methods marked with @action or @asyncAction decorator
+	 */
+	function store() {
+	    return function (target, propertyKey) {
+	        var _a;
+	        var service = target;
+	        service[STORES] = (_a = service[STORES]) !== null && _a !== void 0 ? _a : [];
+	        service[STORES].push(propertyKey);
+	    };
+	}
+	/**
+	 * Method decorator allow to change properties marked with @store within method.
+	 * After method execution, the React Context in which the service is located will be updated
+	 */
+	// export function asyncAction() {
+	// 	return function(target: ImmutableService, propertyKey: string, descriptor: PropertyDescriptor) {
+	// 		const fn = descriptor.value as Function;
+	// 		descriptor.value = async function(args: any[]) {
+	// 			(this as ImmutableServiceInternal)[PROVIDER].start();
+	// 			let res = undefined;
+	// 			try {
+	// 				res = await fn.call(this, args);
+	// 			} finally {
+	// 				(this as ImmutableServiceInternal)[PROVIDER].finish();
+	// 			}
+	// 			return res;
+	// 		};
+	// 	};
+	// }
+	var waitForFinish = function (service, promise) { return __awaiter(void 0, void 0, void 0, function () {
+	    return __generator(this, function (_a) {
+	        switch (_a.label) {
+	            case 0:
+	                _a.trys.push([0, , 2, 3]);
+	                return [4 /*yield*/, promise];
+	            case 1: return [2 /*return*/, _a.sent()];
+	            case 2:
+	                service[PROVIDER].finish();
+	                return [7 /*endfinally*/];
+	            case 3: return [2 /*return*/];
+	        }
+	    });
+	}); };
+	var checkForPromise = function (value) {
+	    //return value instanceof Promise
+	    return value && typeof value['then'] === 'function';
+	};
+	/**
+	 * Method decorator allow to change properties marked with @store within method.
+	 * After method execution, the React Context in which the service is located will be updated
+	 */
+	function action() {
+	    return function (_target, _propertyKey, descriptor) {
+	        var fn = descriptor.value;
+	        descriptor.value = function (args) {
+	            this[PROVIDER].start();
+	            var isPromise = false;
+	            try {
+	                var res = fn.call(this, args);
+	                isPromise = checkForPromise(res);
+	                if (isPromise) {
+	                    return waitForFinish(this, res);
+	                }
+	                else {
+	                    return res;
+	                }
+	            }
+	            finally {
+	                if (!isPromise) {
+	                    this[PROVIDER].finish();
+	                }
+	            }
+	        };
+	    };
+	}
+
+	exports.InjectedService = InjectedService;
 	exports.inject = inject;
 	exports.provider = provider;
 	exports.registerIn = registerIn;
 	exports.Inject = inject;
 	exports.Provider = provider;
 	exports.RegisterIn = registerIn;
-	exports.InjectorContext = InjectorContext;
 	exports.toClass = toClass;
-	exports.toFactory = toFactory;
 	exports.toExisting = toExisting;
+	exports.toFactory = toFactory;
 	exports.toValue = toValue;
 	exports.useInstance = useInstance;
 	exports.useInstances = useInstances;
+	exports.ImmutableService = ImmutableService;
+	exports.action = action;
+	exports.store = store;
+	exports.original = e$1;
+	exports.enableES5 = R;
+	exports.enableMapSet = N;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 

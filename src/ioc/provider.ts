@@ -20,6 +20,9 @@ type ProviderMixin<T> = T &
 		WrappedComponent: T;
 	};
 
+export abstract class InjectedService {
+	abstract initProvider(refresh: () => void): void;
+}
 /**
  * Decorator or HOC that register dependency injection bindings
  * in scope of decorated class
@@ -35,6 +38,14 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 		_parent = this.context;
 		_bindingMap = bindingMap;
 		_instanceMap = new Map();
+
+		componentDidMount() {
+			this._instanceMap.forEach(instance => {
+				if (instance instanceof InjectedService) {
+					instance.initProvider(() => this.setState({ injector: this }));
+				}
+			});
+		}
 
 		componentWillUnmount() {
 			this._instanceMap.forEach(instance => {
