@@ -4,11 +4,7 @@
 	(factory((global.ReactIoC = {}),global.React));
 }(this, (function (exports,react) { 'use strict';
 
-	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-	function unwrapExports (x) {
-		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x.default : x;
-	}
+	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -917,7 +913,7 @@
 	        function CreateMapPolyfill() {
 	            var cacheSentinel = {};
 	            var arraySentinel = [];
-	            var MapIterator = (function () {
+	            var MapIterator = /** @class */ (function () {
 	                function MapIterator(keys, values, selector) {
 	                    this._index = 0;
 	                    this._keys = keys;
@@ -960,7 +956,7 @@
 	                };
 	                return MapIterator;
 	            }());
-	            return (function () {
+	            return /** @class */ (function () {
 	                function Map() {
 	                    this._keys = [];
 	                    this._values = [];
@@ -1036,7 +1032,7 @@
 	        }
 	        // naive Set shim
 	        function CreateSetPolyfill() {
-	            return (function () {
+	            return /** @class */ (function () {
 	                function Set() {
 	                    this._map = new _Map();
 	                }
@@ -1062,7 +1058,7 @@
 	            var UUID_SIZE = 16;
 	            var keys = HashMap.create();
 	            var rootKey = CreateUniqueKey();
-	            return (function () {
+	            return /** @class */ (function () {
 	                function WeakMap() {
 	                    this._key = CreateUniqueKey();
 	                }
@@ -1147,18 +1143,18 @@
 	})(Reflect$1 || (Reflect$1 = {}));
 
 	/*! *****************************************************************************
-	Copyright (c) Microsoft Corporation. All rights reserved.
-	Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-	this file except in compliance with the License. You may obtain a copy of the
-	License at http://www.apache.org/licenses/LICENSE-2.0
+	Copyright (c) Microsoft Corporation.
 
-	THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-	KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-	WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-	MERCHANTABLITY OR NON-INFRINGEMENT.
+	Permission to use, copy, modify, and/or distribute this software for any
+	purpose with or without fee is hereby granted.
 
-	See the Apache Version 2.0 License for specific language governing permissions
-	and limitations under the License.
+	THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+	REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+	INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+	LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+	OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+	PERFORMANCE OF THIS SOFTWARE.
 	***************************************************************************** */
 	/* global Reflect, Promise */
 
@@ -1175,29 +1171,52 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	}
 
+	/**
+	 * @internal
+	 */
 	function isFunction(arg) {
-	    return typeof arg === "function";
+	    return typeof arg === 'function';
 	}
+	/**
+	 * @internal
+	 */
 	function isObject(arg) {
-	    return arg && typeof arg === "object";
+	    return arg && typeof arg === 'object';
 	}
+	/**
+	 * @internal
+	 */
 	function isString(arg) {
-	    return typeof arg === "string";
+	    return typeof arg === 'string';
 	}
+	/**
+	 * @internal
+	 */
 	function isSymbol(arg) {
-	    return typeof arg === "symbol";
+	    return typeof arg === 'symbol';
 	}
+	/**
+	 * @internal
+	 */
 	function isToken(arg) {
 	    return isFunction(arg) || isObject(arg) || isString(arg) || isSymbol(arg);
 	}
+	/**
+	 * @internal
+	 */
 	function isReactComponent(prototype) {
 	    return isObject(prototype) && isObject(prototype.isReactComponent);
 	}
+	/**
+	 * @internal
+	 */
 	function isValidMetadata(arg) {
-	    return (isFunction(arg) &&
-	        [Object, Function, Number, String, Boolean].indexOf(arg) === -1);
+	    return isFunction(arg) && [Object, Function, Number, String, Boolean].indexOf(arg) === -1;
 	}
 
+	/**
+	 * @internal
+	 */
 	function getDebugName(value) {
 	    if (isFunction(value)) {
 	        return String(value.displayName || value.name);
@@ -1207,6 +1226,9 @@
 	    }
 	    return String(value);
 	}
+	/**
+	 * @internal
+	 */
 	function logError(message) {
 	    try {
 	        throw new Error(message);
@@ -1215,15 +1237,24 @@
 	        console.error(e);
 	    }
 	}
+	/**
+	 * @internal
+	 */
 	function logIncorrectBinding(token, binding) {
 	    var tokenName = getDebugName(token);
 	    var bindingName = getDebugName(binding);
 	    logError("Binding [" + tokenName + ", " + bindingName + "] is incorrect.");
 	}
+	/**
+	 * @internal
+	 */
 	function logNotFoundDependency(token) {
 	    var name = getDebugName(token);
 	    logError("Dependency " + name + " is not found.\nPlease register " + name + " in some Provider e.g.\n@provider([" + name + ", " + name + "])\nclass App extends React.Component { /*...*/ }");
 	}
+	/**
+	 * @internal
+	 */
 	function logNotFoundProvider(target) {
 	    if (isReactComponent(target)) {
 	        var name_1 = getDebugName(target);
@@ -1233,15 +1264,19 @@
 	        logError("Provider is not found.\n  Please define Provider e.g.\n  @provider([MyService, MyService])\n  class App extends React.Component { /*...*/ }");
 	    }
 	}
+	/**
+	 * @internal
+	 */
 	function logInvalidMetadata(target, token) {
 	    var tokenName = getDebugName(token);
 	    var targetName = getDebugName(target);
 	    logError(tokenName + " is not a valid dependency.\nPlease specify ES6 class as property type e.g.\nclass MyService {}\nclass " + targetName + " {\n  @inject myService: MyService;\n}");
 	}
 
-	/** @typedef {import("./types").Token} Token */
+	/* istanbul ignore next */
+	var INJECTOR = (typeof Symbol === 'function' ? Symbol() : '__injector__');
 	/** React Context for Injector */
-	var InjectorContext = react.createContext(null);
+	var InjectorContext = react.createContext({});
 	/**
 	 * Dependency injection container
 	 * @internal
@@ -1269,12 +1304,9 @@
 	        target[INJECTOR] = injector;
 	        return injector;
 	    }
-	    return null;
+	    return undefined;
 	}
-	/** @type {Injector} */
 	var currentInjector = null;
-	/* istanbul ignore next */
-	var INJECTOR = typeof Symbol === "function" ? Symbol() : "__injector__";
 	/**
 	 * Resolve a class instance that registered by some Provider in hierarchy.
 	 * Instance is cached in Provider that registers it's class.
@@ -1315,34 +1347,26 @@
 	    }
 	    return undefined;
 	}
-	/** @type {Function[]} */
+	/**
+	 * @internal
+	 */
 	var registrationQueue = [];
 
-	/** @typedef {import("./types").Token} Token */
-	/**
-	 * Property decorator that resolves a class instance
-	 * which registered by some Provider in hierarchy.
-	 * Instance is cached in Provider that registers it's class.
-	 * @param {Token | Object} [targetOrToken] Object or Class prototype or dependency injection token
-	 * @param {string | symbol | Function} [keyOrToken] Property key or dependency injection token
-	 */
 	function inject(targetOrToken, keyOrToken) {
 	    if (isFunction(keyOrToken)) {
 	        return injectFunction(targetOrToken, keyOrToken);
 	    }
-	    /** @type {Token} */
-	    var token;
+	    var token = targetOrToken;
 	    if (!keyOrToken) {
-	        token = targetOrToken;
 	        return injectDecorator;
 	    }
-	    return injectDecorator(targetOrToken, keyOrToken);
+	    return injectDecorator(token, keyOrToken);
 	    function injectDecorator(prototype, key) {
 	        {
 	            defineContextType(prototype);
 	        }
 	        if (!token) {
-	            token = Reflect.getMetadata("design:type", prototype, key);
+	            token = Reflect.getMetadata('design:type', prototype, key);
 	            {
 	                if (!isValidMetadata(token)) {
 	                    logInvalidMetadata(targetOrToken, token);
@@ -1404,7 +1428,7 @@
 	                logError("Decorator tries to overwrite existing " + className_1 + ".contextType");
 	            }
 	            else {
-	                Object.defineProperty(constructor, "contextType", {
+	                Object.defineProperty(constructor, 'contextType', {
 	                    get: function () {
 	                        return InjectorContext;
 	                    },
@@ -1417,37 +1441,51 @@
 	    }
 	}
 
-	var reactIs_production_min = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports,"__esModule",{value:!0});
-	var b="function"===typeof Symbol&&Symbol.for,c=b?Symbol.for("react.element"):60103,d=b?Symbol.for("react.portal"):60106,e=b?Symbol.for("react.fragment"):60107,f=b?Symbol.for("react.strict_mode"):60108,g=b?Symbol.for("react.profiler"):60114,h=b?Symbol.for("react.provider"):60109,k=b?Symbol.for("react.context"):60110,l=b?Symbol.for("react.async_mode"):60111,m=b?Symbol.for("react.concurrent_mode"):60111,n=b?Symbol.for("react.forward_ref"):60112,p=b?Symbol.for("react.suspense"):60113,r=b?Symbol.for("react.memo"):
-	60115,t=b?Symbol.for("react.lazy"):60116;function u(a){if("object"===typeof a&&null!==a){var q=a.$$typeof;switch(q){case c:switch(a=a.type,a){case l:case m:case e:case g:case f:return a;default:switch(a=a&&a.$$typeof,a){case k:case n:case h:return a;default:return q}}case d:return q}}}function v(a){return u(a)===m}exports.typeOf=u;exports.AsyncMode=l;exports.ConcurrentMode=m;exports.ContextConsumer=k;exports.ContextProvider=h;exports.Element=c;exports.ForwardRef=n;exports.Fragment=e;
-	exports.Profiler=g;exports.Portal=d;exports.StrictMode=f;exports.isValidElementType=function(a){return "string"===typeof a||"function"===typeof a||a===e||a===m||a===g||a===f||a===p||"object"===typeof a&&null!==a&&(a.$$typeof===t||a.$$typeof===r||a.$$typeof===h||a.$$typeof===k||a.$$typeof===n)};exports.isAsyncMode=function(a){return v(a)||u(a)===l};exports.isConcurrentMode=v;exports.isContextConsumer=function(a){return u(a)===k};exports.isContextProvider=function(a){return u(a)===h};
-	exports.isElement=function(a){return "object"===typeof a&&null!==a&&a.$$typeof===c};exports.isForwardRef=function(a){return u(a)===n};exports.isFragment=function(a){return u(a)===e};exports.isProfiler=function(a){return u(a)===g};exports.isPortal=function(a){return u(a)===d};exports.isStrictMode=function(a){return u(a)===f};
-	});
+	/** @license React v16.13.1
+	 * react-is.production.min.js
+	 *
+	 * Copyright (c) Facebook, Inc. and its affiliates.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+	var b="function"===typeof Symbol&&Symbol.for,c=b?Symbol.for("react.element"):60103,d=b?Symbol.for("react.portal"):60106,e=b?Symbol.for("react.fragment"):60107,f=b?Symbol.for("react.strict_mode"):60108,g=b?Symbol.for("react.profiler"):60114,h=b?Symbol.for("react.provider"):60109,k=b?Symbol.for("react.context"):60110,l=b?Symbol.for("react.async_mode"):60111,m=b?Symbol.for("react.concurrent_mode"):60111,n=b?Symbol.for("react.forward_ref"):60112,p=b?Symbol.for("react.suspense"):60113,q=b?
+	Symbol.for("react.suspense_list"):60120,r=b?Symbol.for("react.memo"):60115,t=b?Symbol.for("react.lazy"):60116,v=b?Symbol.for("react.block"):60121,w=b?Symbol.for("react.fundamental"):60117,x=b?Symbol.for("react.responder"):60118,y=b?Symbol.for("react.scope"):60119;
+	function z(a){if("object"===typeof a&&null!==a){var u=a.$$typeof;switch(u){case c:switch(a=a.type,a){case l:case m:case e:case g:case f:case p:return a;default:switch(a=a&&a.$$typeof,a){case k:case n:case t:case r:case h:return a;default:return u}}case d:return u}}}function A(a){return z(a)===m}var AsyncMode=l;var ConcurrentMode=m;var ContextConsumer=k;var ContextProvider=h;var Element=c;var ForwardRef=n;var Fragment=e;var Lazy=t;var Memo=r;var Portal=d;
+	var Profiler=g;var StrictMode=f;var Suspense=p;var isAsyncMode=function(a){return A(a)||z(a)===l};var isConcurrentMode=A;var isContextConsumer=function(a){return z(a)===k};var isContextProvider=function(a){return z(a)===h};var isElement=function(a){return "object"===typeof a&&null!==a&&a.$$typeof===c};var isForwardRef=function(a){return z(a)===n};var isFragment=function(a){return z(a)===e};var isLazy=function(a){return z(a)===t};
+	var isMemo=function(a){return z(a)===r};var isPortal=function(a){return z(a)===d};var isProfiler=function(a){return z(a)===g};var isStrictMode=function(a){return z(a)===f};var isSuspense=function(a){return z(a)===p};
+	var isValidElementType=function(a){return "string"===typeof a||"function"===typeof a||a===e||a===m||a===g||a===f||a===p||a===q||"object"===typeof a&&null!==a&&(a.$$typeof===t||a.$$typeof===r||a.$$typeof===h||a.$$typeof===k||a.$$typeof===n||a.$$typeof===w||a.$$typeof===x||a.$$typeof===y||a.$$typeof===v)};var typeOf=z;
 
-	unwrapExports(reactIs_production_min);
-	var reactIs_production_min_1 = reactIs_production_min.typeOf;
-	var reactIs_production_min_2 = reactIs_production_min.AsyncMode;
-	var reactIs_production_min_3 = reactIs_production_min.ConcurrentMode;
-	var reactIs_production_min_4 = reactIs_production_min.ContextConsumer;
-	var reactIs_production_min_5 = reactIs_production_min.ContextProvider;
-	var reactIs_production_min_6 = reactIs_production_min.Element;
-	var reactIs_production_min_7 = reactIs_production_min.ForwardRef;
-	var reactIs_production_min_8 = reactIs_production_min.Fragment;
-	var reactIs_production_min_9 = reactIs_production_min.Profiler;
-	var reactIs_production_min_10 = reactIs_production_min.Portal;
-	var reactIs_production_min_11 = reactIs_production_min.StrictMode;
-	var reactIs_production_min_12 = reactIs_production_min.isValidElementType;
-	var reactIs_production_min_13 = reactIs_production_min.isAsyncMode;
-	var reactIs_production_min_14 = reactIs_production_min.isConcurrentMode;
-	var reactIs_production_min_15 = reactIs_production_min.isContextConsumer;
-	var reactIs_production_min_16 = reactIs_production_min.isContextProvider;
-	var reactIs_production_min_17 = reactIs_production_min.isElement;
-	var reactIs_production_min_18 = reactIs_production_min.isForwardRef;
-	var reactIs_production_min_19 = reactIs_production_min.isFragment;
-	var reactIs_production_min_20 = reactIs_production_min.isProfiler;
-	var reactIs_production_min_21 = reactIs_production_min.isPortal;
-	var reactIs_production_min_22 = reactIs_production_min.isStrictMode;
+	var reactIs_production_min = {
+		AsyncMode: AsyncMode,
+		ConcurrentMode: ConcurrentMode,
+		ContextConsumer: ContextConsumer,
+		ContextProvider: ContextProvider,
+		Element: Element,
+		ForwardRef: ForwardRef,
+		Fragment: Fragment,
+		Lazy: Lazy,
+		Memo: Memo,
+		Portal: Portal,
+		Profiler: Profiler,
+		StrictMode: StrictMode,
+		Suspense: Suspense,
+		isAsyncMode: isAsyncMode,
+		isConcurrentMode: isConcurrentMode,
+		isContextConsumer: isContextConsumer,
+		isContextProvider: isContextProvider,
+		isElement: isElement,
+		isForwardRef: isForwardRef,
+		isFragment: isFragment,
+		isLazy: isLazy,
+		isMemo: isMemo,
+		isPortal: isPortal,
+		isProfiler: isProfiler,
+		isStrictMode: isStrictMode,
+		isSuspense: isSuspense,
+		isValidElementType: isValidElementType,
+		typeOf: typeOf
+	};
 
 	var reactIs_development = createCommonjsModule(function (module, exports) {
 
@@ -1456,84 +1494,34 @@
 	if (process.env.NODE_ENV !== "production") {
 	  (function() {
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
 	// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 	// nor polyfill, then a plain number is used for performance.
 	var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-
 	var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
 	var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
 	var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
 	var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
 	var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
 	var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-	var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace;
+	var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+	// (unstable) APIs that have been removed. Can we remove the symbols?
+
 	var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
 	var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
 	var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
 	var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+	var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
 	var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
 	var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+	var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+	var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
+	var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
+	var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
 
 	function isValidElementType(type) {
-	  return typeof type === 'string' || typeof type === 'function' ||
-	  // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-	  type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE);
+	  return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+	  type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
 	}
-
-	/**
-	 * Forked from fbjs/warning:
-	 * https://github.com/facebook/fbjs/blob/e66ba20ad5be433eb54423f2b097d829324d9de6/packages/fbjs/src/__forks__/warning.js
-	 *
-	 * Only change is we use console.warn instead of console.error,
-	 * and do nothing when 'console' is not supported.
-	 * This really simplifies the code.
-	 * ---
-	 * Similar to invariant but only logs a warning if the condition is not met.
-	 * This can be used to log issues in development environments in critical
-	 * paths. Removing the logging code for production environments will keep the
-	 * same logic and follow the same code paths.
-	 */
-
-	var lowPriorityWarning = function () {};
-
-	{
-	  var printWarning = function (format) {
-	    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	      args[_key - 1] = arguments[_key];
-	    }
-
-	    var argIndex = 0;
-	    var message = 'Warning: ' + format.replace(/%s/g, function () {
-	      return args[argIndex++];
-	    });
-	    if (typeof console !== 'undefined') {
-	      console.warn(message);
-	    }
-	    try {
-	      // --- Welcome to debugging React ---
-	      // This error was thrown as a convenience so that you can use this stack
-	      // to find the callsite that caused this warning to fire.
-	      throw new Error(message);
-	    } catch (x) {}
-	  };
-
-	  lowPriorityWarning = function (condition, format) {
-	    if (format === undefined) {
-	      throw new Error('`lowPriorityWarning(condition, format, ...args)` requires a warning ' + 'message argument');
-	    }
-	    if (!condition) {
-	      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-	        args[_key2 - 2] = arguments[_key2];
-	      }
-
-	      printWarning.apply(undefined, [format].concat(args));
-	    }
-	  };
-	}
-
-	var lowPriorityWarning$1 = lowPriorityWarning;
 
 	function typeOf(object) {
 	  if (typeof object === 'object' && object !== null) {
@@ -1549,28 +1537,34 @@
 	          case REACT_FRAGMENT_TYPE:
 	          case REACT_PROFILER_TYPE:
 	          case REACT_STRICT_MODE_TYPE:
+	          case REACT_SUSPENSE_TYPE:
 	            return type;
+
 	          default:
 	            var $$typeofType = type && type.$$typeof;
 
 	            switch ($$typeofType) {
 	              case REACT_CONTEXT_TYPE:
 	              case REACT_FORWARD_REF_TYPE:
+	              case REACT_LAZY_TYPE:
+	              case REACT_MEMO_TYPE:
 	              case REACT_PROVIDER_TYPE:
 	                return $$typeofType;
+
 	              default:
 	                return $$typeof;
 	            }
+
 	        }
+
 	      case REACT_PORTAL_TYPE:
 	        return $$typeof;
 	    }
 	  }
 
 	  return undefined;
-	}
+	} // AsyncMode is deprecated along with isAsyncMode
 
-	// AsyncMode is deprecated along with isAsyncMode
 	var AsyncMode = REACT_ASYNC_MODE_TYPE;
 	var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
 	var ContextConsumer = REACT_CONTEXT_TYPE;
@@ -1578,20 +1572,23 @@
 	var Element = REACT_ELEMENT_TYPE;
 	var ForwardRef = REACT_FORWARD_REF_TYPE;
 	var Fragment = REACT_FRAGMENT_TYPE;
-	var Profiler = REACT_PROFILER_TYPE;
+	var Lazy = REACT_LAZY_TYPE;
+	var Memo = REACT_MEMO_TYPE;
 	var Portal = REACT_PORTAL_TYPE;
+	var Profiler = REACT_PROFILER_TYPE;
 	var StrictMode = REACT_STRICT_MODE_TYPE;
+	var Suspense = REACT_SUSPENSE_TYPE;
+	var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
 
-	var hasWarnedAboutDeprecatedIsAsyncMode = false;
-
-	// AsyncMode should be deprecated
 	function isAsyncMode(object) {
 	  {
 	    if (!hasWarnedAboutDeprecatedIsAsyncMode) {
-	      hasWarnedAboutDeprecatedIsAsyncMode = true;
-	      lowPriorityWarning$1(false, 'The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
+	      hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
+
+	      console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
 	    }
 	  }
+
 	  return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
 	}
 	function isConcurrentMode(object) {
@@ -1612,17 +1609,25 @@
 	function isFragment(object) {
 	  return typeOf(object) === REACT_FRAGMENT_TYPE;
 	}
-	function isProfiler(object) {
-	  return typeOf(object) === REACT_PROFILER_TYPE;
+	function isLazy(object) {
+	  return typeOf(object) === REACT_LAZY_TYPE;
+	}
+	function isMemo(object) {
+	  return typeOf(object) === REACT_MEMO_TYPE;
 	}
 	function isPortal(object) {
 	  return typeOf(object) === REACT_PORTAL_TYPE;
 	}
+	function isProfiler(object) {
+	  return typeOf(object) === REACT_PROFILER_TYPE;
+	}
 	function isStrictMode(object) {
 	  return typeOf(object) === REACT_STRICT_MODE_TYPE;
 	}
+	function isSuspense(object) {
+	  return typeOf(object) === REACT_SUSPENSE_TYPE;
+	}
 
-	exports.typeOf = typeOf;
 	exports.AsyncMode = AsyncMode;
 	exports.ConcurrentMode = ConcurrentMode;
 	exports.ContextConsumer = ContextConsumer;
@@ -1630,10 +1635,12 @@
 	exports.Element = Element;
 	exports.ForwardRef = ForwardRef;
 	exports.Fragment = Fragment;
-	exports.Profiler = Profiler;
+	exports.Lazy = Lazy;
+	exports.Memo = Memo;
 	exports.Portal = Portal;
+	exports.Profiler = Profiler;
 	exports.StrictMode = StrictMode;
-	exports.isValidElementType = isValidElementType;
+	exports.Suspense = Suspense;
 	exports.isAsyncMode = isAsyncMode;
 	exports.isConcurrentMode = isConcurrentMode;
 	exports.isContextConsumer = isContextConsumer;
@@ -1641,36 +1648,45 @@
 	exports.isElement = isElement;
 	exports.isForwardRef = isForwardRef;
 	exports.isFragment = isFragment;
-	exports.isProfiler = isProfiler;
+	exports.isLazy = isLazy;
+	exports.isMemo = isMemo;
 	exports.isPortal = isPortal;
+	exports.isProfiler = isProfiler;
 	exports.isStrictMode = isStrictMode;
+	exports.isSuspense = isSuspense;
+	exports.isValidElementType = isValidElementType;
+	exports.typeOf = typeOf;
 	  })();
 	}
 	});
-
-	unwrapExports(reactIs_development);
-	var reactIs_development_1 = reactIs_development.typeOf;
-	var reactIs_development_2 = reactIs_development.AsyncMode;
-	var reactIs_development_3 = reactIs_development.ConcurrentMode;
-	var reactIs_development_4 = reactIs_development.ContextConsumer;
-	var reactIs_development_5 = reactIs_development.ContextProvider;
-	var reactIs_development_6 = reactIs_development.Element;
-	var reactIs_development_7 = reactIs_development.ForwardRef;
-	var reactIs_development_8 = reactIs_development.Fragment;
-	var reactIs_development_9 = reactIs_development.Profiler;
+	var reactIs_development_1 = reactIs_development.AsyncMode;
+	var reactIs_development_2 = reactIs_development.ConcurrentMode;
+	var reactIs_development_3 = reactIs_development.ContextConsumer;
+	var reactIs_development_4 = reactIs_development.ContextProvider;
+	var reactIs_development_5 = reactIs_development.Element;
+	var reactIs_development_6 = reactIs_development.ForwardRef;
+	var reactIs_development_7 = reactIs_development.Fragment;
+	var reactIs_development_8 = reactIs_development.Lazy;
+	var reactIs_development_9 = reactIs_development.Memo;
 	var reactIs_development_10 = reactIs_development.Portal;
-	var reactIs_development_11 = reactIs_development.StrictMode;
-	var reactIs_development_12 = reactIs_development.isValidElementType;
-	var reactIs_development_13 = reactIs_development.isAsyncMode;
-	var reactIs_development_14 = reactIs_development.isConcurrentMode;
-	var reactIs_development_15 = reactIs_development.isContextConsumer;
-	var reactIs_development_16 = reactIs_development.isContextProvider;
-	var reactIs_development_17 = reactIs_development.isElement;
-	var reactIs_development_18 = reactIs_development.isForwardRef;
-	var reactIs_development_19 = reactIs_development.isFragment;
-	var reactIs_development_20 = reactIs_development.isProfiler;
-	var reactIs_development_21 = reactIs_development.isPortal;
-	var reactIs_development_22 = reactIs_development.isStrictMode;
+	var reactIs_development_11 = reactIs_development.Profiler;
+	var reactIs_development_12 = reactIs_development.StrictMode;
+	var reactIs_development_13 = reactIs_development.Suspense;
+	var reactIs_development_14 = reactIs_development.isAsyncMode;
+	var reactIs_development_15 = reactIs_development.isConcurrentMode;
+	var reactIs_development_16 = reactIs_development.isContextConsumer;
+	var reactIs_development_17 = reactIs_development.isContextProvider;
+	var reactIs_development_18 = reactIs_development.isElement;
+	var reactIs_development_19 = reactIs_development.isForwardRef;
+	var reactIs_development_20 = reactIs_development.isFragment;
+	var reactIs_development_21 = reactIs_development.isLazy;
+	var reactIs_development_22 = reactIs_development.isMemo;
+	var reactIs_development_23 = reactIs_development.isPortal;
+	var reactIs_development_24 = reactIs_development.isProfiler;
+	var reactIs_development_25 = reactIs_development.isStrictMode;
+	var reactIs_development_26 = reactIs_development.isSuspense;
+	var reactIs_development_27 = reactIs_development.isValidElementType;
+	var reactIs_development_28 = reactIs_development.typeOf;
 
 	var reactIs = createCommonjsModule(function (module) {
 
@@ -1685,41 +1701,56 @@
 	 * Copyright 2015, Yahoo! Inc.
 	 * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
 	 */
-
 	var REACT_STATICS = {
-	    childContextTypes: true,
-	    contextType: true,
-	    contextTypes: true,
-	    defaultProps: true,
-	    displayName: true,
-	    getDefaultProps: true,
-	    getDerivedStateFromError: true,
-	    getDerivedStateFromProps: true,
-	    mixins: true,
-	    propTypes: true,
-	    type: true
+	  childContextTypes: true,
+	  contextType: true,
+	  contextTypes: true,
+	  defaultProps: true,
+	  displayName: true,
+	  getDefaultProps: true,
+	  getDerivedStateFromError: true,
+	  getDerivedStateFromProps: true,
+	  mixins: true,
+	  propTypes: true,
+	  type: true
 	};
-
 	var KNOWN_STATICS = {
-	    name: true,
-	    length: true,
-	    prototype: true,
-	    caller: true,
-	    callee: true,
-	    arguments: true,
-	    arity: true
+	  name: true,
+	  length: true,
+	  prototype: true,
+	  caller: true,
+	  callee: true,
+	  arguments: true,
+	  arity: true
 	};
-
 	var FORWARD_REF_STATICS = {
-	    '$$typeof': true,
-	    render: true,
-	    defaultProps: true,
-	    displayName: true,
-	    propTypes: true
+	  '$$typeof': true,
+	  render: true,
+	  defaultProps: true,
+	  displayName: true,
+	  propTypes: true
 	};
-
+	var MEMO_STATICS = {
+	  '$$typeof': true,
+	  compare: true,
+	  defaultProps: true,
+	  displayName: true,
+	  propTypes: true,
+	  type: true
+	};
 	var TYPE_STATICS = {};
 	TYPE_STATICS[reactIs.ForwardRef] = FORWARD_REF_STATICS;
+	TYPE_STATICS[reactIs.Memo] = MEMO_STATICS;
+
+	function getStatics(component) {
+	  // React v16.11 and below
+	  if (reactIs.isMemo(component)) {
+	    return MEMO_STATICS;
+	  } // React v16.12 and above
+
+
+	  return TYPE_STATICS[component['$$typeof']] || REACT_STATICS;
+	}
 
 	var defineProperty = Object.defineProperty;
 	var getOwnPropertyNames = Object.getOwnPropertyNames;
@@ -1727,52 +1758,50 @@
 	var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 	var getPrototypeOf = Object.getPrototypeOf;
 	var objectPrototype = Object.prototype;
-
 	function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
-	    if (typeof sourceComponent !== 'string') {
-	        // don't hoist over string (html) components
+	  if (typeof sourceComponent !== 'string') {
+	    // don't hoist over string (html) components
+	    if (objectPrototype) {
+	      var inheritedComponent = getPrototypeOf(sourceComponent);
 
-	        if (objectPrototype) {
-	            var inheritedComponent = getPrototypeOf(sourceComponent);
-	            if (inheritedComponent && inheritedComponent !== objectPrototype) {
-	                hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
-	            }
-	        }
-
-	        var keys = getOwnPropertyNames(sourceComponent);
-
-	        if (getOwnPropertySymbols) {
-	            keys = keys.concat(getOwnPropertySymbols(sourceComponent));
-	        }
-
-	        var targetStatics = TYPE_STATICS[targetComponent['$$typeof']] || REACT_STATICS;
-	        var sourceStatics = TYPE_STATICS[sourceComponent['$$typeof']] || REACT_STATICS;
-
-	        for (var i = 0; i < keys.length; ++i) {
-	            var key = keys[i];
-	            if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
-	                var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
-	                try {
-	                    // Avoid failures from read-only properties
-	                    defineProperty(targetComponent, key, descriptor);
-	                } catch (e) {}
-	            }
-	        }
-
-	        return targetComponent;
+	      if (inheritedComponent && inheritedComponent !== objectPrototype) {
+	        hoistNonReactStatics(targetComponent, inheritedComponent, blacklist);
+	      }
 	    }
 
-	    return targetComponent;
+	    var keys = getOwnPropertyNames(sourceComponent);
+
+	    if (getOwnPropertySymbols) {
+	      keys = keys.concat(getOwnPropertySymbols(sourceComponent));
+	    }
+
+	    var targetStatics = getStatics(targetComponent);
+	    var sourceStatics = getStatics(sourceComponent);
+
+	    for (var i = 0; i < keys.length; ++i) {
+	      var key = keys[i];
+
+	      if (!KNOWN_STATICS[key] && !(blacklist && blacklist[key]) && !(sourceStatics && sourceStatics[key]) && !(targetStatics && targetStatics[key])) {
+	        var descriptor = getOwnPropertyDescriptor(sourceComponent, key);
+
+	        try {
+	          // Avoid failures from read-only properties
+	          defineProperty(targetComponent, key, descriptor);
+	        } catch (e) {}
+	      }
+	    }
+	  }
+
+	  return targetComponent;
 	}
 
 	var hoistNonReactStatics_cjs = hoistNonReactStatics;
 
-	/** @typedef {import("./types").Definition} Definition */
-	/** @typedef {import("./types").Token} Token */
+	var IS_BINDING = (typeof Symbol === 'function' ? Symbol() : '__binding__');
 	/**
 	 * Bind type to specified class.
-	 * @param {new (...args) => any} constructor
-	 * @return {Function}
+	 * @param constructor Service constructor
+	 * @returns Dependency resolver
 	 */
 	function toClass(constructor) {
 	    {
@@ -1788,12 +1817,6 @@
 	        return instance;
 	    });
 	}
-	/**
-	 * Bind type to specified factory funciton.
-	 * @param {any} depsOrFactory Dependencies or factory
-	 * @param {Function} [factory] Factory
-	 * @return {Function}
-	 */
 	function toFactory(depsOrFactory, factory) {
 	    {
 	        if (factory) {
@@ -1808,16 +1831,12 @@
 	            logError("Factory " + getDebugName(depsOrFactory) + " is not a valid dependency");
 	        }
 	    }
-	    return asBinding(factory
-	        ? function (injector) {
-	            return factory.apply(void 0, depsOrFactory.map(function (token) { return getInstance(injector, token); }));
-	        }
-	        : depsOrFactory);
+	    return asBinding(factory ? function (injector) { return factory.apply(void 0, depsOrFactory.map(function (token) { return getInstance(injector, token); })); } : depsOrFactory);
 	}
 	/**
 	 * Bind type to specified value.
-	 * @param {any} value
-	 * @return {Function}
+	 * @param  value
+	 * @returns Dependency resolver
 	 */
 	function toValue(value) {
 	    {
@@ -1830,7 +1849,7 @@
 	/**
 	 * Bind type to existing instance located by token.
 	 * @param {Token} token
-	 * @return {Function}
+	 * @return Dependency resolver
 	 */
 	function toExisting(token) {
 	    {
@@ -1840,8 +1859,6 @@
 	    }
 	    return asBinding(function (injector) { return getInstance(injector, token); });
 	}
-	/* istanbul ignore next */
-	var IS_BINDING = typeof Symbol === "function" ? Symbol() : "__binding__";
 	/**
 	 * Mark function as binding function.
 	 * @internal
@@ -1855,8 +1872,6 @@
 	/**
 	 * Add bindings to bindings Map
 	 * @internal
-	 * @param {Map<Token, Function>} bindingMap
-	 * @param {Definition[]} definitions
 	 */
 	function addBindings(bindingMap, definitions) {
 	    definitions.forEach(function (definition) {
@@ -1878,11 +1893,11 @@
 	    });
 	}
 
-	/** @typedef {import("./types").Definition} Definition */
-	/** @typedef {import("./types").Token} Token */
 	/**
-	 * HOC that registers dependency injection bindings in scope of decorated component
-	 * @param {...Definition} definitions Dependency injection configuration
+	 * Decorator or HOC that register dependency injection bindings
+	 * in scope of decorated class
+	 * @param definitions Dependency injection configuration
+	 * @returns Decorator or HOC
 	 */
 	var provider = function () {
 	    var definitions = [];
@@ -1890,7 +1905,6 @@
 	        definitions[_i] = arguments[_i];
 	    }
 	    return function (Wrapped) {
-	        /** @type {Map<Token, Function>} */
 	        var bindingMap = new Map();
 	        addBindings(bindingMap, definitions);
 	        var Provider = /** @class */ (function (_super) {
@@ -1910,7 +1924,7 @@
 	                });
 	            };
 	            Provider.prototype.render = function () {
-	                return react.createElement(InjectorContext.Provider, { value: this }, react.createElement(Wrapped, this.props));
+	                return react.createElement(InjectorContext.Provider, { value: { injector: this } }, react.createElement(Wrapped, this.props));
 	            };
 	            /**
 	             * Register dependency injection bindings in scope of decorated class
@@ -1928,7 +1942,7 @@
 	        }(Injector));
 	        {
 	            Provider.displayName = "Provider(" + (Wrapped.displayName || Wrapped.name) + ")";
-	            Object.defineProperty(Provider, "contextType", {
+	            Object.defineProperty(Provider, 'contextType', {
 	                get: function () {
 	                    return InjectorContext;
 	                },
@@ -1942,19 +1956,17 @@
 	    };
 	};
 	/**
-	 * Register class in specified provider.
-	 * @typedef {{ register(constructor: Function): void }} Provider
-	 * @param {() => Provider} getProvider Function that returns some provider
-	 * @param {Function} [binding] Dependency injection binding
+	 * Decorator that lazily registers class in scope of specified Provider.
+	 * @param getProvider Lambda function that returns Provider
+	 * @param biding Dependency injection binding
+	 * @returns Decorator
 	 */
 	var registerIn = function (getProvider, binding) { return function (constructor) {
 	    registrationQueue.push(function () {
 	        {
 	            var provider_1 = getProvider();
 	            if (!isFunction(provider_1) || !(provider_1.prototype instanceof Injector)) {
-	                logError(getDebugName(provider_1) + " is not a valid Provider. Please use:\n" +
-	                    "@registerIn(() => MyProvider)\n" +
-	                    ("class " + getDebugName(constructor) + " {}\n"));
+	                logError(getDebugName(provider_1) + " is not a valid Provider. Please use:\n" + "@registerIn(() => MyProvider)\n" + ("class " + getDebugName(constructor) + " {}\n"));
 	            }
 	            else {
 	                provider_1.register(binding ? [constructor, binding] : constructor);
@@ -1964,16 +1976,16 @@
 	    return constructor;
 	}; };
 
-	/** @typedef {import("./types").Token} Token */
 	/**
 	 * React hook for resolving a class instance that registered by some Provider in hierarchy.
 	 * Instance is cached in Provider that registers it's class.
-	 * @param {Token} token Dependency injection token
-	 * @returns {Object} Resolved class instance
+	 * @param  token Dependency injection token
+	 * @returns Resolved class instance
 	 */
 	function useInstance(token) {
-	    var ref = react.useRef(null);
-	    var injector = react.useContext(InjectorContext);
+	    var _a;
+	    var ref = react.useRef(undefined);
+	    var injector = (_a = react.useContext(InjectorContext)) === null || _a === void 0 ? void 0 : _a.injector;
 	    {
 	        if (!injector) {
 	            logNotFoundProvider();
@@ -1984,16 +1996,17 @@
 	/**
 	 * React hook for resolving a class instances that registered by some Provider in hierarchy.
 	 * Instances are cached in Provider that registers it's classes.
-	 * @param {...Token} tokens Dependency injection tokens
-	 * @returns {Object[]} Resolved class instances
+	 * @param  tokens Dependency injection tokens
+	 * @returns Resolved class instances
 	 */
 	function useInstances() {
+	    var _a;
 	    var tokens = [];
 	    for (var _i = 0; _i < arguments.length; _i++) {
 	        tokens[_i] = arguments[_i];
 	    }
 	    var ref = react.useRef(null);
-	    var injector = react.useContext(InjectorContext);
+	    var injector = (_a = react.useContext(InjectorContext)) === null || _a === void 0 ? void 0 : _a.injector;
 	    {
 	        if (!injector) {
 	            logNotFoundProvider();
