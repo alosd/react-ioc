@@ -145,11 +145,12 @@ var Injector = /** @class */ (function(_super) {
  * @returns {Injector}
  */
 function getInjector(target) {
+	var _a;
 	var injector = target[INJECTOR];
 	if (injector) {
 		return injector;
 	}
-	injector = currentInjector || target.context;
+	injector = currentInjector || ((_a = target.context) === null || _a === void 0 ? void 0 : _a.injector);
 	if (injector instanceof Injector) {
 		target[INJECTOR] = injector;
 		return injector;

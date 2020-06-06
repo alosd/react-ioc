@@ -9,8 +9,10 @@ interface InjectedInstance {
 	[INJECTOR]?: Injector;
 }
 
+type InjectorContextType = { injector?: Injector };
+
 /** React Context for Injector */
-export const InjectorContext = createContext<{ injector?: Injector }>({});
+export const InjectorContext = createContext<InjectorContextType>({});
 
 /**
  * Dependency injection container
@@ -35,7 +37,7 @@ export function getInjector(target: Object) {
 	if (injector) {
 		return injector;
 	}
-	injector = currentInjector || (target as Component).context;
+	injector = currentInjector || ((target as Component).context as InjectorContextType)?.injector;
 	if (injector instanceof Injector) {
 		(target as InjectedInstance)[INJECTOR] = injector;
 		return injector;

@@ -3,7 +3,7 @@ import { Context } from 'react';
 type ClassDecorator = <T extends Function>(target: T) => T;
 type Constructor<T> = new (...args: any[]) => T;
 type Token = Function | Object | string | symbol;
-type Definition = Function | [Function] | [Token, Function];
+export type Definition = Function | [Function] | [Token, Function];
 type Provider = {
 	/**
 	 * Register dependency injection bindings in scope of decorated class
