@@ -24,6 +24,8 @@ export abstract class Injector<P = {}> extends Component<P> {
 	_bindingMap!: Map<Token, Function>;
 
 	_instanceMap!: Map<Token, Object>;
+
+	abstract _initInstance(instance: Object): void;
 }
 
 /**
@@ -77,6 +79,7 @@ export function getInstance(injector: Injector | undefined, token: Token) {
 				currentInjector = prevInjector;
 			}
 			injector._instanceMap.set(token, instance);
+			injector._initInstance(instance);
 			return instance;
 		}
 		injector = injector._parent;

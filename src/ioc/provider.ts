@@ -20,7 +20,9 @@ type ProviderMixin<T> = T &
 		WrappedComponent: T;
 	};
 
+const Initialized: unique symbol = (typeof Symbol === 'function' ? Symbol() : '__init__') as any;
 export abstract class InjectedService {
+	[Initialized]?: boolean;
 	abstract initProvider(refresh: () => void): void;
 }
 /**
@@ -38,12 +40,16 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 		_parent = this.context;
 		_bindingMap = bindingMap;
 		_instanceMap = new Map();
+		_initInstance(instance: Object) {
+			if (instance instanceof InjectedService && !instance[Initialized]) {
+				instance.initProvider(() => this.setState({ injector: this }));
+				instance[Initialized] = true;
+			}
+		}
 
 		componentDidMount() {
 			this._instanceMap.forEach(instance => {
-				if (instance instanceof InjectedService) {
-					instance.initProvider(() => this.setState({ injector: this }));
-				}
+				this._initInstance(instance);
 			});
 		}
 

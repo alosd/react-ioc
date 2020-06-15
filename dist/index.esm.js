@@ -188,6 +188,7 @@ function getInstance(injector, token) {
 				currentInjector = prevInjector;
 			}
 			injector._instanceMap.set(token, instance);
+			injector._initInstance(instance);
 			return instance;
 		}
 		injector = injector._parent;
@@ -401,6 +402,7 @@ function addBindings(bindingMap, definitions) {
 	});
 }
 
+var Initialized = typeof Symbol === 'function' ? Symbol() : '__init__';
 var InjectedService = /** @class */ (function() {
 	function InjectedService() {}
 	return InjectedService;
@@ -428,14 +430,19 @@ var provider = function() {
 				_this._instanceMap = new Map();
 				return _this;
 			}
+			Provider.prototype._initInstance = function(instance) {
+				var _this = this;
+				if (instance instanceof InjectedService && !instance[Initialized]) {
+					instance.initProvider(function() {
+						return _this.setState({ injector: _this });
+					});
+					instance[Initialized] = true;
+				}
+			};
 			Provider.prototype.componentDidMount = function() {
 				var _this = this;
 				this._instanceMap.forEach(function(instance) {
-					if (instance instanceof InjectedService) {
-						instance.initProvider(function() {
-							return _this.setState({ injector: _this });
-						});
-					}
+					_this._initInstance(instance);
 				});
 			};
 			Provider.prototype.componentWillUnmount = function() {
