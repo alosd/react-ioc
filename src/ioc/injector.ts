@@ -19,7 +19,7 @@ export const InjectorContext = createContext<InjectorContextType>({});
  * @internal
  */
 export abstract class Injector<P = {}> extends Component<P> {
-	_parent!: Injector;
+	_parent?: Injector;
 
 	_bindingMap!: Map<Token, Function>;
 

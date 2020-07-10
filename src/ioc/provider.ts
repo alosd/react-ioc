@@ -37,7 +37,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 	addBindings(bindingMap, definitions);
 
 	class Provider extends Injector {
-		_parent = this.context;
+		_parent = this.context?.injector;
 		_bindingMap = bindingMap;
 		_instanceMap = new Map();
 		_initInstance(instance: Object) {

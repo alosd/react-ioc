@@ -1956,8 +1956,9 @@
 	        var Provider = /** @class */ (function (_super) {
 	            __extends(Provider, _super);
 	            function Provider() {
-	                var _this = _super !== null && _super.apply(this, arguments) || this;
-	                _this._parent = _this.context;
+	                var _a;
+	                var _this = _super.apply(this, arguments) || this;
+	                _this._parent = (_a = _this.context) === null || _a === void 0 ? void 0 : _a.injector;
 	                _this._bindingMap = bindingMap;
 	                _this._instanceMap = new Map();
 	                return _this;
