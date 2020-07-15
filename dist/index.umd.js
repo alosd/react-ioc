@@ -2259,6 +2259,12 @@
 	    };
 	}
 
+	var ComponentWithServices = function (_a) {
+	    var services = _a.services, children = _a.children, deps = _a.deps;
+	    var ComponentWithService = react.useCallback(provider.apply(void 0, services)(function () { return react.createElement(react.Fragment, {}, children); }), deps !== null && deps !== void 0 ? deps : []);
+	    return react.createElement(ComponentWithService);
+	};
+
 	exports.InjectedService = InjectedService;
 	exports.inject = inject;
 	exports.provider = provider;
@@ -2278,6 +2284,7 @@
 	exports.original = e$1;
 	exports.enableES5 = R;
 	exports.enableMapSet = N;
+	exports.ComponentWithServices = ComponentWithServices;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 

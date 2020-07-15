@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { Component, createContext, createElement, useContext, useRef } from 'react';
 import { __extends, __awaiter, __generator } from 'tslib';
 import { createDraft, finishDraft, immerable } from 'immer';
 export { original, enableES5, enableMapSet } from 'immer';
+import { Component, createContext, createElement, useContext, useRef, useCallback, Fragment } from 'react';
 
 /**
  * @internal
@@ -742,6 +742,22 @@ function action() {
 	};
 }
 
+var ComponentWithServices = function(_a) {
+	var services = _a.services,
+		children = _a.children,
+		deps = _a.deps;
+	var ComponentWithService = useCallback(
+		provider.apply(
+			void 0,
+			services
+		)(function() {
+			return createElement(Fragment, {}, children);
+		}),
+		deps !== null && deps !== void 0 ? deps : []
+	);
+	return createElement(ComponentWithService);
+};
+
 export {
 	InjectedService,
 	inject,
@@ -758,6 +774,7 @@ export {
 	useInstances,
 	ImmutableService,
 	action,
-	store
+	store,
+	ComponentWithServices
 };
 //# sourceMappingURL=index.esm.js.map

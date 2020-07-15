@@ -8,9 +8,9 @@ function _interopDefault(ex) {
 
 require('reflect-metadata');
 var hoistNonReactStatics = _interopDefault(require('hoist-non-react-statics'));
-var react = require('react');
 var tslib = require('tslib');
 var immer = require('immer');
+var react = require('react');
 
 /**
  * @internal
@@ -749,6 +749,22 @@ function action() {
 	};
 }
 
+var ComponentWithServices = function(_a) {
+	var services = _a.services,
+		children = _a.children,
+		deps = _a.deps;
+	var ComponentWithService = react.useCallback(
+		provider.apply(
+			void 0,
+			services
+		)(function() {
+			return react.createElement(react.Fragment, {}, children);
+		}),
+		deps !== null && deps !== void 0 ? deps : []
+	);
+	return react.createElement(ComponentWithService);
+};
+
 exports.original = immer.original;
 exports.enableES5 = immer.enableES5;
 exports.enableMapSet = immer.enableMapSet;
@@ -768,4 +784,5 @@ exports.useInstances = useInstances;
 exports.ImmutableService = ImmutableService;
 exports.action = action;
 exports.store = store;
+exports.ComponentWithServices = ComponentWithServices;
 //# sourceMappingURL=index.js.map

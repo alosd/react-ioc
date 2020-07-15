@@ -126,6 +126,16 @@ export declare abstract class ImmutableService {
 
 	protected waitForAsync<T>(promise: Promise<T>): Promise<T>;
 }
+
+/**
+ * Component wrapped with provider with injected bindings
+ * @param deps Services dependency list ,If present, provider (with all injected services) will be re-created if the values in the list change.
+ */
+export declare const ComponentWithServices: React.FC<{
+	services: Definition[];
+	deps?: React.DependencyList;
+}>;
+
 /**
  * Property Decorator convert property to immutable
  * Changes for such property allowed only from methods marked with @action or @asyncAction decorator
