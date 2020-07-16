@@ -13,6 +13,9 @@ type InjectorContextType = { injector?: Injector };
 
 /** React Context for Injector */
 export const InjectorContext = createContext<InjectorContextType>({});
+if (__DEV__) {
+	InjectorContext.displayName = 'InjectorContext';
+}
 
 /**
  * Dependency injection container

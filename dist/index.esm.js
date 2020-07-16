@@ -3,7 +3,7 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 import { __extends, __awaiter, __generator } from 'tslib';
 import { createDraft, finishDraft, immerable } from 'immer';
 export { original, enableES5, enableMapSet } from 'immer';
-import { Component, createContext, createElement, useContext, useRef, useCallback, Fragment } from 'react';
+import { Component, createContext, createElement, useContext, useRef, useCallback } from 'react';
 
 /**
  * @internal
@@ -127,6 +127,9 @@ function logInvalidMetadata(target, token) {
 var INJECTOR = typeof Symbol === 'function' ? Symbol() : '__injector__';
 /** React Context for Injector */
 var InjectorContext = createContext({});
+if (process.env.NODE_ENV !== 'production') {
+	InjectorContext.displayName = 'InjectorContext';
+}
 /**
  * Dependency injection container
  * @internal
@@ -747,12 +750,15 @@ var ComponentWithServices = function(_a) {
 		children = _a.children,
 		deps = _a.deps;
 	var ComponentWithService = useCallback(
-		provider.apply(
-			void 0,
-			services
-		)(function() {
-			return createElement(Fragment, {}, children);
-		}),
+		(function() {
+			var fn = function() {
+				return children;
+			};
+			if (process.env.NODE_ENV !== 'production') {
+				fn.displayName = 'ComponentWithServices.Children';
+			}
+			return provider.apply(void 0, services)(fn);
+		})(),
 		deps !== null && deps !== void 0 ? deps : []
 	);
 	return createElement(ComponentWithService);

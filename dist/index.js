@@ -134,6 +134,9 @@ function logInvalidMetadata(target, token) {
 var INJECTOR = typeof Symbol === 'function' ? Symbol() : '__injector__';
 /** React Context for Injector */
 var InjectorContext = react.createContext({});
+if (process.env.NODE_ENV !== 'production') {
+	InjectorContext.displayName = 'InjectorContext';
+}
 /**
  * Dependency injection container
  * @internal
@@ -754,12 +757,15 @@ var ComponentWithServices = function(_a) {
 		children = _a.children,
 		deps = _a.deps;
 	var ComponentWithService = react.useCallback(
-		provider.apply(
-			void 0,
-			services
-		)(function() {
-			return react.createElement(react.Fragment, {}, children);
-		}),
+		(function() {
+			var fn = function() {
+				return children;
+			};
+			if (process.env.NODE_ENV !== 'production') {
+				fn.displayName = 'ComponentWithServices.Children';
+			}
+			return provider.apply(void 0, services)(fn);
+		})(),
 		deps !== null && deps !== void 0 ? deps : []
 	);
 	return react.createElement(ComponentWithService);

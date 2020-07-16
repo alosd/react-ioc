@@ -1315,6 +1315,9 @@
 	var INJECTOR = (typeof Symbol === 'function' ? Symbol() : '__injector__');
 	/** React Context for Injector */
 	var InjectorContext = react.createContext({});
+	{
+	    InjectorContext.displayName = 'InjectorContext';
+	}
 	/**
 	 * Dependency injection container
 	 * @internal
@@ -2261,7 +2264,13 @@
 
 	var ComponentWithServices = function (_a) {
 	    var services = _a.services, children = _a.children, deps = _a.deps;
-	    var ComponentWithService = react.useCallback(provider.apply(void 0, services)(function () { return react.createElement(react.Fragment, {}, children); }), deps !== null && deps !== void 0 ? deps : []);
+	    var ComponentWithService = react.useCallback((function () {
+	        var fn = function () { return children; };
+	        {
+	            fn.displayName = 'ComponentWithServices.Children';
+	        }
+	        return provider.apply(void 0, services)(fn);
+	    })(), deps !== null && deps !== void 0 ? deps : []);
 	    return react.createElement(ComponentWithService);
 	};
 
