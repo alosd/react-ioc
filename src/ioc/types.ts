@@ -1,5 +1,6 @@
 export type Token = Function | Object | string | symbol;
-export type Definition = Function | [Function] | [Token, Function];
+export type DefinitionObject = { token: Token; binding: Function };
+export type Definition = Function | [Function] | [Token, Function] | DefinitionObject;
 
 export type Constructor<T> = new (...args: any[]) => T;
 

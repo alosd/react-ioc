@@ -1,0 +1,12 @@
+{
+	"extends": "./tsconfig.json",
+
+	"compilerOptions": {
+		"emitDeclarationOnly": true,
+		"outFile": "dist/index1.js",
+		"strict": false,
+		"allowJs": true,
+		"types": ["node"]
+	},
+	"include": ["dist/index.js"]
+}

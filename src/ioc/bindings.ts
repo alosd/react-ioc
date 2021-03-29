@@ -1,5 +1,5 @@
 import { INJECTOR, getInstance, Injector } from './injector';
-import { isFunction, isToken, Token, Constructor, Definition } from './types';
+import { isFunction, isToken, Token, Constructor, Definition, DefinitionObject } from './types';
 import { logIncorrectBinding, logError, getDebugName } from './errors';
 
 const IS_BINDING: unique symbol = (typeof Symbol === 'function' ? Symbol() : '__binding__') as any;
@@ -106,6 +106,10 @@ function asBinding(binding: BindingFunction): Function {
 export function addBindings(bindingMap: Map<Token, Function>, definitions: Definition[]) {
 	definitions.forEach(definition => {
 		let token, binding;
+		if (typeof definition == 'object' && (definition as DefinitionObject).token && (definition as DefinitionObject).binding) {
+			token = (definition as DefinitionObject).token;
+			binding = (definition as DefinitionObject).binding;
+		}
 		if (Array.isArray(definition)) {
 			[token, binding = token] = definition;
 		} else {

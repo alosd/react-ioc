@@ -1,6 +1,6 @@
 {
 	"name": "react-ioc-immer",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "Hierarchical Dependency Injection for React with Immutable State Services",
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
@@ -73,11 +73,11 @@
 		"rollup-plugin-terser": "^3.0.0",
 		"rollup-plugin-typescript2": "^0.22.1",
 		"ts-jest": "^23.10.5",
-		"typescript": "^3.7.5"
+		"typescript": "^3.7.5",
+		"immer": "^6.0.9"
 	},
 	"dependencies": {
 		"hoist-non-react-statics": "^3.3.0",
-		"immer": "^6.0.9",
 		"reflect-metadata": "^0.1.13",
 		"tslib": "^1.10.0"
 	},

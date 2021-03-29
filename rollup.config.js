@@ -53,19 +53,39 @@ const cjs = {
 	}
 };
 
-const umd = {
-	input: 'src/index.ts',
-	external: ['react'],
+const es6_immutable = {
+	input: 'src/immutable.ts',
+	external: ['react', 'hoist-non-react-statics', 'reflect-metadata', 'tslib', 'immer'],
 	output: {
-		file: pkg.main.replace('.js', '.umd.js'),
-		format: 'umd',
-		name: 'ReactIoC',
-		globals: {
-			react: 'React'
-		},
+		file: 'dist/immutable.js',
+		format: 'es',
 		sourcemap: true
 	}
 };
+
+const cjs_immutable = {
+	input: 'src/immutable.ts',
+	external: ['react', 'hoist-non-react-statics', 'reflect-metadata', 'tslib', 'immer'],
+	output: {
+		file: 'dist/immutable.js',
+		format: 'cjs',
+		sourcemap: true
+	}
+};
+
+// const umd = {
+// 	input: 'src/index.ts',
+// 	external: ['react'],
+// 	output: {
+// 		file: pkg.main.replace('.js', '.umd.js'),
+// 		format: 'umd',
+// 		name: 'ReactIoC',
+// 		globals: {
+// 			react: 'React'
+// 		},
+// 		sourcemap: true
+// 	}
+// };
 
 export default [
 	deepmerge(es6, {
@@ -74,9 +94,9 @@ export default [
 	deepmerge(cjs, {
 		plugins: [typescriptPlugin(), replace({ __DEV__: `(process.env.NODE_ENV !== "production")` }), prettierPlugin()]
 	}),
-	deepmerge(umd, {
-		plugins: [nodeResolve(), typescriptPlugin(), replace({ __DEV__: true }), commonjs()]
-	}),
+	// deepmerge(umd, {
+	// 	plugins: [nodeResolve(), typescriptPlugin(), replace({ __DEV__: true }), commonjs()]
+	// }),
 	deepmerge(es6, {
 		output: {
 			file: es6.output.file.replace('.js', '.min.js')
@@ -89,10 +109,29 @@ export default [
 		},
 		plugins: [typescriptPlugin(), replace({ __DEV__: false }), terserPlugin(), filesize()]
 	}),
-	deepmerge(umd, {
+	// deepmerge(umd, {
+	// 	output: {
+	// 		file: umd.output.file.replace('.js', '.min.js')
+	// 	},
+	// 	plugins: [nodeResolve(), typescriptPlugin(), replace({ __DEV__: false }), commonjs(), terserPlugin(), filesize()]
+	// })
+
+	deepmerge(es6_immutable, {
+		plugins: [typescriptPlugin(), replace({ __DEV__: `(process.env.NODE_ENV !== "production")` }), prettierPlugin()]
+	}),
+	deepmerge(cjs_immutable, {
+		plugins: [typescriptPlugin(), replace({ __DEV__: `(process.env.NODE_ENV !== "production")` }), prettierPlugin()]
+	}),
+	deepmerge(es6_immutable, {
 		output: {
-			file: umd.output.file.replace('.js', '.min.js')
+			file: es6_immutable.output.file.replace('.js', '.min.js')
 		},
-		plugins: [nodeResolve(), typescriptPlugin(), replace({ __DEV__: false }), commonjs(), terserPlugin(), filesize()]
+		plugins: [typescriptPlugin(), replace({ __DEV__: false }), terserPlugin(), filesize()]
+	}),
+	deepmerge(cjs_immutable, {
+		output: {
+			file: cjs_immutable.output.file.replace('.js', '.min.js')
+		},
+		plugins: [typescriptPlugin(), replace({ __DEV__: false }), terserPlugin(), filesize()]
 	})
 ];

@@ -3,7 +3,8 @@ import { Context } from 'react';
 type ClassDecorator = <T extends Function>(target: T) => T;
 type Constructor<T> = new (...args: any[]) => T;
 type Token = Function | Object | string | symbol;
-export type Definition = Function | [Function] | [Token, Function];
+export type DefinitionObject = { token: Token; binding: Function };
+export type Definition = Function | [Function] | [Token, Function] | DefinitionObject;
 type Provider = {
 	/**
 	 * Register dependency injection bindings in scope of decorated class
@@ -133,7 +134,7 @@ export declare abstract class ImmutableService {
  */
 export declare const ComponentWithServices: React.FC<{
 	services: Definition[];
-	deps?: React.DependencyList;
+	/* 	deps?: React.DependencyList; */
 }>;
 
 /**

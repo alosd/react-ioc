@@ -1,20 +1,12 @@
-import { createElement, FC, useCallback, DependencyList } from 'react';
+import { createElement, FC, /* useCallback, DependencyList, */ useRef, Fragment } from 'react';
 import { Definition } from './ioc/types';
 import { provider } from './ioc';
 
+const ComponentWithService: FC = ({ children }) => createElement(Fragment, null, children);
+
 export const ComponentWithServices: FC<{
 	services: Definition[];
-	deps?: DependencyList;
-}> = ({ services, children, deps }) => {
-	const ComponentWithService = useCallback(
-		(() => {
-			const fn = () => children;
-			if (__DEV__) {
-				fn.displayName = 'ComponentWithServices.Children';
-			}
-			return provider(...services)(fn as FC) as FC;
-		})(),
-		deps ?? []
-	);
-	return createElement(ComponentWithService);
+}> = ({ services, children }) => {
+	const ref = useRef(provider(...services)(ComponentWithService));
+	return createElement(ref.current, null, children);
 };
