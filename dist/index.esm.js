@@ -434,6 +434,7 @@ var provider = function() {
 				_this._parent = (_a = _this.context) === null || _a === void 0 ? void 0 : _a.injector;
 				_this._bindingMap = bindingMap;
 				_this._instanceMap = new Map();
+				_this.state = { injector: _this };
 				return _this;
 			}
 			Provider.prototype._initInstance = function(instance) {
@@ -459,7 +460,7 @@ var provider = function() {
 				});
 			};
 			Provider.prototype.render = function() {
-				return createElement(InjectorContext.Provider, { value: { injector: this } }, createElement(Wrapped, this.props));
+				return createElement(InjectorContext.Provider, { value: this.state }, createElement(Wrapped, this.props));
 			};
 			/**
 			 * Register dependency injection bindings in scope of decorated class

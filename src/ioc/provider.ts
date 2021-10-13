@@ -40,6 +40,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 		_parent = this.context?.injector;
 		_bindingMap = bindingMap;
 		_instanceMap = new Map();
+		state = { injector: this };
 		_initInstance(instance: Object) {
 			if (instance instanceof InjectedService && !instance[Initialized]) {
 				instance.initProvider(() => this.setState({ injector: this }));
@@ -62,7 +63,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 		}
 
 		render() {
-			return createElement(InjectorContext.Provider, { value: { injector: this } }, createElement(Wrapped, this.props as any));
+			return createElement(InjectorContext.Provider, { value: this.state }, createElement(Wrapped, this.props as any));
 		}
 
 		static WrappedComponent = Wrapped;
