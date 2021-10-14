@@ -1,4 +1,5 @@
 import { Component, createContext } from 'react';
+import { LiteEventImpl } from '../liteEvent';
 import { logNotFoundDependency } from './errors';
 import { Token } from './types';
 
@@ -27,6 +28,8 @@ export abstract class Injector<P = {}> extends Component<P> {
 	_bindingMap!: Map<Token, Function>;
 
 	_instanceMap!: Map<Token, Object>;
+
+	_childNotifications = new LiteEventImpl();
 
 	abstract _initInstance(instance: Object): void;
 }

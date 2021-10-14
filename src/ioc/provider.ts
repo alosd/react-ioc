@@ -41,9 +41,13 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 		_bindingMap = bindingMap;
 		_instanceMap = new Map();
 		state = { injector: this };
+
 		_initInstance(instance: Object) {
 			if (instance instanceof InjectedService && !instance[Initialized]) {
-				instance.initProvider(() => this.setState({ injector: this }));
+				instance.initProvider(() => {
+					this.setState({ injector: this });
+					this._childNotifications.trigger();
+				});
 				instance[Initialized] = true;
 			}
 		}

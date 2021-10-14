@@ -22,6 +22,28 @@ function logError(message) {
 	}
 }
 
+var LiteEventImpl = /** @class */ (function() {
+	function LiteEventImpl() {
+		this.handlers = [];
+	}
+	// on(handler: () => void): () => void;
+	LiteEventImpl.prototype.on = function(handler) {
+		this.handlers.push(handler);
+		return handler;
+	};
+	LiteEventImpl.prototype.off = function(handler) {
+		this.handlers = this.handlers.filter(function(h) {
+			return h !== handler;
+		});
+	};
+	LiteEventImpl.prototype.trigger = function(data) {
+		this.handlers.slice(0).forEach(function(h) {
+			return h(data);
+		});
+	};
+	return LiteEventImpl;
+})();
+
 /** React Context for Injector */
 var InjectorContext = react.createContext({});
 if (process.env.NODE_ENV !== 'production') {
@@ -34,7 +56,9 @@ if (process.env.NODE_ENV !== 'production') {
 var Injector = /** @class */ (function(_super) {
 	tslib.__extends(Injector, _super);
 	function Injector() {
-		return (_super !== null && _super.apply(this, arguments)) || this;
+		var _this = (_super !== null && _super.apply(this, arguments)) || this;
+		_this._childNotifications = new LiteEventImpl();
+		return _this;
 	}
 	return Injector;
 })(react.Component);

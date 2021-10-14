@@ -157,3 +157,17 @@ export declare function original<T>(value: T): T | undefined;
 export declare function enableES5(): void;
 
 export declare function enableMapSet(): void;
+
+/* Lite Event exports */
+type ActionsType<T> = (data?: T) => void;
+
+export interface LiteEvent<T = void> {
+	on(handler: ActionsType<T>): ActionsType<T>;
+	off(handler: ActionsType<T>): void;
+}
+
+export declare class LiteEventImpl<T = void> implements LiteEvent<T> {
+	on(handler: ActionsType<T>): ActionsType<T>;
+	off(handler: ActionsType<T>): void;
+	trigger(data: T): void;
+}

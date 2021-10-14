@@ -1,7 +1,29 @@
 import 'reflect-metadata';
 import { __extends } from 'tslib';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { Component, createContext, createElement, useContext, useRef, Fragment } from 'react';
+import { Component, createContext, createElement, useContext, useEffect, useRef, useState, Fragment } from 'react';
+
+var LiteEventImpl = /** @class */ (function() {
+	function LiteEventImpl() {
+		this.handlers = [];
+	}
+	// on(handler: () => void): () => void;
+	LiteEventImpl.prototype.on = function(handler) {
+		this.handlers.push(handler);
+		return handler;
+	};
+	LiteEventImpl.prototype.off = function(handler) {
+		this.handlers = this.handlers.filter(function(h) {
+			return h !== handler;
+		});
+	};
+	LiteEventImpl.prototype.trigger = function(data) {
+		this.handlers.slice(0).forEach(function(h) {
+			return h(data);
+		});
+	};
+	return LiteEventImpl;
+})();
 
 /**
  * @internal
@@ -135,7 +157,9 @@ if (process.env.NODE_ENV !== 'production') {
 var Injector = /** @class */ (function(_super) {
 	__extends(Injector, _super);
 	function Injector() {
-		return (_super !== null && _super.apply(this, arguments)) || this;
+		var _this = (_super !== null && _super.apply(this, arguments)) || this;
+		_this._childNotifications = new LiteEventImpl();
+		return _this;
 	}
 	return Injector;
 })(Component);
@@ -441,7 +465,8 @@ var provider = function() {
 				var _this = this;
 				if (instance instanceof InjectedService && !instance[Initialized]) {
 					instance.initProvider(function() {
-						return _this.setState({ injector: _this });
+						_this.setState({ injector: _this });
+						_this._childNotifications.trigger();
 					});
 					instance[Initialized] = true;
 				}
@@ -532,7 +557,35 @@ function useInstance(token) {
 			logNotFoundProvider();
 		}
 	}
-	return ref.current || (ref.current = getInstance(injector, token));
+	var result = ref.current || (ref.current = getInstance(injector, token));
+	var _b = useState({}),
+		updater = _b[1];
+	useEffect(function() {
+		// if token found in nearest provider - no update is required - useContext already invoke rerender,
+		// otherwise we should manually refresh component
+		var event;
+		var publisher;
+		if (injector && result) {
+			if (!injector._instanceMap.has(token)) {
+				var i = injector._parent;
+				while (i) {
+					if (i._instanceMap.has(token)) {
+						publisher = i;
+						event = i._childNotifications.on(function() {
+							return updater({});
+						});
+					}
+					i = i._parent;
+				}
+			}
+		}
+		return function() {
+			if (publisher) {
+				publisher._childNotifications.off(event);
+			}
+		};
+	}, []);
+	return result;
 }
 /**
  * React hook for resolving a class instances that registered by some Provider in hierarchy.
@@ -553,12 +606,42 @@ function useInstances() {
 			logNotFoundProvider();
 		}
 	}
-	return (
+	var result =
 		ref.current ||
 		(ref.current = tokens.map(function(token) {
 			return getInstance(injector, token);
-		}))
-	);
+		}));
+	var _b = useState({}),
+		updater = _b[1];
+	useEffect(function() {
+		// if token found in nearest provider - no update is required - useContext already invoke rerender,
+		// otherwise we should manually refresh component
+		var subscriptions = [];
+		if (injector) {
+			tokens.forEach(function(token) {
+				if (!injector._instanceMap.has(token)) {
+					var i = injector._parent;
+					while (i) {
+						if (i._instanceMap.has(token)) {
+							subscriptions.push({
+								publisher: i,
+								event: i._childNotifications.on(function() {
+									return updater({});
+								})
+							});
+						}
+						i = i._parent;
+					}
+				}
+			});
+		}
+		return function() {
+			subscriptions.forEach(function(s) {
+				return s.publisher._childNotifications.off(s.event);
+			});
+		};
+	}, []);
+	return result;
 }
 
 var ComponentWithService = function(_a) {
@@ -586,6 +669,7 @@ export {
 	toValue,
 	useInstance,
 	useInstances,
-	ComponentWithServices
+	ComponentWithServices,
+	LiteEventImpl
 };
 //# sourceMappingURL=index.esm.js.map
