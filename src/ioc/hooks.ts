@@ -20,6 +20,7 @@ export function useInstance(token: Token) {
 	const result = ref.current || (ref.current = getInstance(injector, token));
 
 	const [, updater] = useState({});
+	const refUpd = useRef({ updater });
 	useEffect(() => {
 		// if token found in nearest provider - no update is required - useContext already invoke rerender,
 		// otherwise we should manually refresh component
@@ -31,7 +32,7 @@ export function useInstance(token: Token) {
 				while (i) {
 					if (i._instanceMap.has(token)) {
 						publisher = i;
-						event = i._childNotifications.on(() => updater({}));
+						event = i._childNotifications.on(() => refUpd.current.updater({}));
 					}
 					i = i._parent;
 				}
@@ -39,6 +40,7 @@ export function useInstance(token: Token) {
 		}
 
 		return () => {
+			refUpd.current.updater = () => {};
 			if (publisher) {
 				publisher._childNotifications.off(event);
 			}
@@ -66,6 +68,7 @@ export function useInstances(...tokens: Token[]) {
 	const result = ref.current || (ref.current = tokens.map(token => getInstance(injector, token)));
 
 	const [, updater] = useState({});
+	const refUpd = useRef({ updater });
 	useEffect(() => {
 		// if token found in nearest provider - no update is required - useContext already invoke rerender,
 		// otherwise we should manually refresh component
@@ -79,7 +82,7 @@ export function useInstances(...tokens: Token[]) {
 						if (i._instanceMap.has(token)) {
 							subscriptions.push({
 								publisher: i,
-								event: i._childNotifications.on(() => updater({}))
+								event: i._childNotifications.on(() => refUpd.current.updater({}))
 							});
 						}
 						i = i._parent;
@@ -89,6 +92,7 @@ export function useInstances(...tokens: Token[]) {
 		}
 
 		return () => {
+			refUpd.current.updater = () => {};
 			subscriptions.forEach(s => s.publisher._childNotifications.off(s.event));
 		};
 	}, []);

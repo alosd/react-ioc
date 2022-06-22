@@ -1,4 +1,4 @@
-import { createElement, ComponentType, ComponentClass } from 'react';
+import { createElement, ComponentType, ComponentClass, ReactNode } from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { Injector, InjectorContext, registrationQueue } from './injector';
 import { addBindings } from './bindings';
@@ -37,7 +37,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 	addBindings(bindingMap, definitions);
 
 	class Provider extends Injector {
-		_parent = this.context?.injector;
+		_parent = (this.context as any)?.injector as Injector;
 		_bindingMap = bindingMap;
 		_instanceMap = new Map();
 		state = { injector: this };
@@ -66,7 +66,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 			});
 		}
 
-		render() {
+		render(): ReactNode {
 			return createElement(InjectorContext.Provider, { value: this.state }, createElement(Wrapped, this.props as any));
 		}
 
@@ -97,7 +97,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 	}
 
 	// static fields from component should be visible on the generated Consumer
-	return hoistNonReactStatics(Provider, Wrapped) as any;
+	return hoistNonReactStatics(Provider as unknown as ComponentType<any>, Wrapped) as any;
 };
 
 /**

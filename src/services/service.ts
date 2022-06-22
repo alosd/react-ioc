@@ -70,7 +70,7 @@ class MutationProvider {
 
 // @ts-ignore
 export abstract class ImmutableService extends InjectedService {
-	private [REFRESH]: () => void;
+	private [REFRESH]: (() => void) | undefined;
 	// @ts-ignore
 	private [STORES]: string[];
 	// @ts-ignore
@@ -92,6 +92,7 @@ export abstract class ImmutableService extends InjectedService {
 	}
 	constructor() {
 		super();
+		// @ts-ignore
 		this[STORES] = this[STORES] ?? [];
 		this[immerable] = true;
 		this[PROVIDER] = new MutationProvider(this);

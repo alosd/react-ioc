@@ -132,7 +132,7 @@ export declare abstract class ImmutableService {
  * Component wrapped with provider with injected bindings
  * @param deps Services dependency list ,If present, provider (with all injected services) will be re-created if the values in the list change.
  */
-export declare const ComponentWithServices: React.FC<{
+export declare const ComponentWithServices: React.VFC<{
 	services: Definition[];
 	/* 	deps?: React.DependencyList; */
 }>;
