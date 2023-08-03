@@ -5,6 +5,11 @@ import { Token } from './types';
 
 /* istanbul ignore next */
 export const INJECTOR: unique symbol = (typeof Symbol === 'function' ? Symbol() : '__injector__') as any;
+export const InjectedPromiseProp: unique symbol = (typeof Symbol === 'function' ? Symbol() : '_injected') as any;
+
+export interface InjectedPromise<T> extends Promise<T> {
+	[InjectedPromiseProp]?: boolean;
+}
 
 interface InjectedInstance {
 	[INJECTOR]?: Injector;
@@ -28,6 +33,8 @@ export abstract class Injector<P = {}> extends Component<P> {
 	_bindingMap!: Map<Token, Function>;
 
 	_instanceMap!: Map<Token, Object>;
+
+	_asyncInstanceMap!: Map<Token, Promise<Object>>;
 
 	_childNotifications = new LiteEventImpl();
 
@@ -75,12 +82,23 @@ export function getInstance(injector: Injector | undefined, token: Token) {
 		if (instance !== undefined) {
 			return instance;
 		}
+		const delayed = injector._asyncInstanceMap.get(token);
+		if (delayed) {
+			return delayed;
+		}
 		const binding = injector._bindingMap.get(token);
 		if (binding) {
 			const prevInjector = currentInjector;
 			currentInjector = injector;
 			try {
-				instance = binding(injector);
+				let resolver: (obj: Object) => void = () => {};
+				const _p = new Promise(r => {
+					resolver = r;
+				}) as InjectedPromise<any>;
+				_p[InjectedPromiseProp] = true;
+				injector._asyncInstanceMap.set(token, _p);
+				instance = binding(injector, _p);
+				resolver(instance);
 			} finally {
 				currentInjector = prevInjector;
 			}

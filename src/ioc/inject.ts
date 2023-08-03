@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { InjectorContext, getInjector, getInstance } from './injector';
+import { InjectorContext, getInjector, getInstance, InjectedPromiseProp, InjectedPromise } from './injector';
 import { isValidMetadata, isReactComponent, isFunction, Constructor, Token } from './types';
 import { getDebugName, logInvalidMetadata, logNotFoundProvider, logError } from './errors';
 import { ComponentClass } from 'react';
@@ -60,6 +60,19 @@ export function inject<T>(targetOrToken?: Object | Token, keyOrToken?: string | 
 			enumerable: true,
 			get() {
 				const instance = injectFunction(this, token);
+				if (instance instanceof Promise && (instance as InjectedPromise<any>)[InjectedPromiseProp]) {
+					console.warn(
+						`%c Possible problem - trying to access an incompletely initialized property ${this.constructor.name}.${key as string} - probably a circular reference`,
+						'color:red'
+					);
+					instance.then(value => {
+						Object.defineProperty(this, key, {
+							enumerable: true,
+							writable: true,
+							value
+						});
+					});
+				}
 				Object.defineProperty(this, key, {
 					enumerable: true,
 					writable: true,

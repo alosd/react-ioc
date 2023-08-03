@@ -40,6 +40,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 		_parent = (this.context as any)?.injector as Injector;
 		_bindingMap = bindingMap;
 		_instanceMap = new Map();
+        _asyncInstanceMap = new Map();
 		state = { injector: this };
 
 		_initInstance(instance: Object) {
@@ -67,7 +68,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 		}
 
 		render(): ReactNode {
-			return createElement(InjectorContext.Provider, { value: this.state }, createElement(Wrapped, this.props as any));
+			return createElement(InjectorContext.Provider, { value: this.state }, createElement(Wrapped as any, this.props as any));
 		}
 
 		static WrappedComponent = Wrapped;

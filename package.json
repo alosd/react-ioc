@@ -1,6 +1,6 @@
 {
 	"name": "react-ioc-immer",
-	"version": "0.1.11",
+	"version": "0.1.15",
 	"description": "Hierarchical Dependency Injection for React with Immutable State Services",
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
@@ -9,7 +9,8 @@
 		"dist"
 	],
 	"scripts": {
-		"build": "rimraf dist/* && rollup -c && copyfiles -f src/index.d.ts src/index.js.flow dist --silent",
+		"clean": "rimraf dist/*",
+		"build": "rollup -c && copyfiles -f src/index.d.ts src/immutable.d.ts src/index.js.flow dist --silent",
 		"fastbuild": "tsc -b ./tsconfig.fastbuild.json",
 		"test": "jest"
 	},
@@ -39,6 +40,20 @@
 		"decorators",
 		"react"
 	],
+	"exports": {
+		".": "./dist/index.js",
+		"./immutable": "./dist/immutable.js"
+	},
+	"typesVersions": {
+		"*": {
+			"immutable": [
+				"dist/immutable.d.ts"
+			],
+			"ioc": [
+				"dist/index.d.ts"
+			]
+		}
+	},
 	"author": "Aleksandr Zyrin",
 	"license": "MIT",
 	"bugs": {
@@ -58,7 +73,6 @@
 		"coveralls": "^3.0.2",
 		"deepmerge": "^3.0.0",
 		"husky": "^1.2.0",
-		"immer": "^6.0.9",
 		"jest": "^23.6.0",
 		"lint-staged": "^8.1.0",
 		"prettier": "^1.15.3",
@@ -80,6 +94,9 @@
 		"hoist-non-react-statics": "^3.3.0",
 		"reflect-metadata": "^0.1.13",
 		"tslib": "^2.4.0"
+	},
+	"peerDependencies": {
+		"immer": "^6.0.9"
 	},
 	"jest": {
 		"collectCoverage": true,

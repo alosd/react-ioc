@@ -19,7 +19,7 @@
 		"resolveJsonModule": true,
 		"moduleResolution": "node",
 		"target": "es6",
-		"lib": ["dom", "es5", "es2015.core", "es2015.collection", "es2015.iterable", "es2015.symbol"],
+		"lib": ["dom", "es5", "ES2015", "es2015.core", "es2015.collection", "es2015.iterable", "es2015.symbol"],
 		"outDir": "dist",
 		"types": ["reflect-metadata", "jest"]
 	}

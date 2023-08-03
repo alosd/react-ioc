@@ -1,4 +1,4 @@
-import { createElement, FC, /* useCallback, DependencyList, */ useRef, Fragment, PropsWithChildren } from 'react';
+import { createElement, FC, Fragment, PropsWithChildren, useMemo } from 'react';
 import { Definition } from './ioc/types';
 import { provider } from './ioc';
 
@@ -7,6 +7,6 @@ const ComponentWithService: FC<PropsWithChildren> = ({ children }) => createElem
 export const ComponentWithServices: FC<PropsWithChildren<{
 	services: Definition[];
 }>> = ({ services, children }) => {
-	const ref = useRef(provider(...services)(ComponentWithService));
-	return createElement(ref.current, null, children);
+	const instance = useMemo(() => provider(...services)(ComponentWithService), []);
+	return createElement(instance, null, children);
 };

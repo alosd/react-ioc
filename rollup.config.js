@@ -12,7 +12,7 @@ const typescriptPlugin = () =>
 	typescript({
 		tsconfigOverride: {
 			compilerOptions: {
-				target: 'es5',
+				target: 'es6',
 				module: 'es2015'
 			},
 			include: ['src']

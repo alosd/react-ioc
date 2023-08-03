@@ -1,12 +1,12 @@
 import { INJECTOR, getInstance, Injector } from './injector';
-import { isFunction, isToken, Token, Constructor, Definition, DefinitionObject } from './types';
+import { isFunction, isToken, Token, Constructor, Definition, DefinitionObject, PromisifyArray } from './types';
 import { logIncorrectBinding, logError, getDebugName } from './errors';
 
 const IS_BINDING: unique symbol = (typeof Symbol === 'function' ? Symbol() : '__binding__') as any;
 interface BindingMark {
 	[IS_BINDING]?: boolean;
 }
-type BindingFunction = ((injector: Injector) => any) & BindingMark;
+type BindingFunction = ((injector: Injector, postPromise: Promise<any>) => any) & BindingMark;
 
 interface InjectedInstance {
 	[INJECTOR]?: Injector;
@@ -36,7 +36,7 @@ export function toClass<T>(constructor: Constructor<T>) {
  * @param factory Factory
  * @returns Dependency resolver
  */
-export function toFactory<T>(factory: () => T): Function;
+export function toFactory<T>(factory: (resolve: (token: Token) => any) => T): Function;
 /**
  * Bind dependency to specified factory funciton.
  * @param deps Factory dependencies
@@ -57,9 +57,29 @@ export function toFactory(depsOrFactory?: any, factory?: any) {
 			logError(`Factory ${getDebugName(depsOrFactory)} is not a valid dependency`);
 		}
 	}
-	return asBinding(factory ? injector => factory(...depsOrFactory.map((token: Token) => getInstance(injector, token))) : depsOrFactory);
+	return asBinding(
+		factory ? injector => factory(...depsOrFactory.map((token: Token) => getInstance(injector, token))) : injector => depsOrFactory((token: Token) => getInstance(injector, token))
+	);
 }
 
+toClass.prePost = (fn: Function, pre?: Function, post?: Function) => {
+	return asBinding((injector, p) => {
+		if (pre) {
+			pre();
+		}
+		const res = fn(injector);
+
+		if (post) {
+			post(res, p);
+		}
+
+		return res;
+	});
+};
+
+export function toAsyncFactory<T extends [any, ...any[]]>(deps: { [K in keyof T]: Constructor<T[K]> | Token }, factory: (...args: PromisifyArray<T>) => any) {
+	return asBinding(injector => factory(...(deps.map((token: Token) => Promise.resolve(getInstance(injector, token))) as PromisifyArray<T>)));
+}
 /**
  * Bind type to specified value.
  * @param  value

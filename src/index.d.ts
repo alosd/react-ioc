@@ -1,8 +1,23 @@
-import { Context } from 'react';
+import { Context, PropsWithChildren } from 'react';
 
 type ClassDecorator = <T extends Function>(target: T) => T;
-type Constructor<T> = new (...args: any[]) => T;
-type Token = Function | Object | string | symbol;
+export type Constructor<T> = new (...args: any[]) => T;
+export type Token = Function | Object | string | symbol;
+type InstancePromise<T extends new (...args: any) => any> = T extends Constructor<infer C> ? Promise<C> : Promise<T>;
+type PromisifyArray<T extends [any, ...any[]]> = [
+	InstancePromise<T[0]>,
+	InstancePromise<T[1]>,
+	InstancePromise<T[2]>,
+	InstancePromise<T[3]>,
+	InstancePromise<T[4]>,
+	InstancePromise<T[5]>,
+	InstancePromise<T[6]>,
+	InstancePromise<T[7]>,
+	InstancePromise<T[8]>,
+	InstancePromise<T[9]>,
+	InstancePromise<T[10]>
+];
+
 export type DefinitionObject = { token: Token; binding: Function };
 export type Definition = Function | [Function] | [Token, Function] | DefinitionObject;
 type Provider = {
@@ -80,14 +95,15 @@ export declare function useInstance<T>(token: Constructor<T> | Token): T;
  * @param tokens Dependency injection tokens
  * @returns Resolved class instances
  */
-export declare function useInstances<T extends [any, ...any[]]>(...tokens: { [K in keyof T]: Constructor<T[K]> | Token }): T;
+export declare function useInstances<T extends [...any[]]>(...tokens: { [K in keyof T]: Constructor<T[K]> | Token }): T;
 
+type prePost = (fn: Function, pre?: Function, post?: (instance: any, promiseInstance: Promise<any>) => void) => Function;
 /**
  * Bind dependency to specified class.
  * @param cosntructor Constructor
  * @returns Dependency resolver
  */
-export declare function toClass(cosntructor: Constructor<any>): Function;
+export declare const toClass: ((cosntructor: Constructor<any>) => Function) & { prePost: prePost };
 
 /**
  * Bind dependency to specified value.
@@ -101,7 +117,8 @@ export declare function toValue(value: any): Function;
  * @param factory Factory
  * @returns Dependency resolver
  */
-export declare function toFactory(factory: () => any): Function;
+export declare function toFactory<T extends (resolve: (token: Token) => any) => any>(factory: T): Function;
+
 /**
  * Bind dependency to specified factory funciton.
  * @param deps Factory dependencies
@@ -110,6 +127,21 @@ export declare function toFactory(factory: () => any): Function;
  */
 export declare function toFactory<T extends [any, ...any[]]>(deps: { [K in keyof T]: Constructor<T[K]> | Token }, factory: (...args: T) => any): Function;
 
+/**
+ * Bind dependency to specified factory funciton.
+ * @param deps Factory dependencies
+ * @param factory Factory
+ * @returns Dependency resolver
+ */
+export declare function toFactory<T extends [...any[]]>(deps: { [K in keyof T]: Constructor<T[K]> | Token }, factory: (...args: T) => any): Function;
+
+/**
+ * Bind async dependency to specified factory funciton.
+ * @param deps Factory dependencies
+ * @param factory Factory
+ * @returns Dependency resolver
+ */
+export declare function toAsyncFactory<T extends [any, ...any[]]>(deps: { [K in keyof T]: Constructor<T[K]> | Token }, factory: (...args: PromisifyArray<T>) => any): Function;
 /**
  * Bind dependency to existing instance located by token.
  * @param token Dependency injection token
@@ -132,31 +164,10 @@ export declare abstract class ImmutableService {
  * Component wrapped with provider with injected bindings
  * @param deps Services dependency list ,If present, provider (with all injected services) will be re-created if the values in the list change.
  */
-export declare const ComponentWithServices: React.VFC<{
+export declare const ComponentWithServices: React.FC<PropsWithChildren<{
 	services: Definition[];
 	/* 	deps?: React.DependencyList; */
-}>;
-
-/**
- * Property Decorator convert property to immutable
- * Changes for such property allowed only from methods marked with @action or @asyncAction decorator
- */
-export declare function store(): (target: ImmutableService, propertyKey: string) => void;
-
-/**
- * Method decorator allow to change properties marked with @store within method.
- * After method execution, the React Context in which the service is located will be updated
- */
-export function action(): (target: ImmutableService, propertyKey: string, descriptor: PropertyDescriptor) => void;
-
-//export function asyncAction():(target: ImmutableService, propertyKey: string, descriptor: PropertyDescriptor)=>void;
-
-/** Get the underlying object from immutable value */
-export declare function original<T>(value: T): T | undefined;
-
-export declare function enableES5(): void;
-
-export declare function enableMapSet(): void;
+}>>;
 
 /* Lite Event exports */
 type ActionsType<T> = (data?: T) => void;

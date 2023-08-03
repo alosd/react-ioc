@@ -1,48 +1,43 @@
-import React, { Component } from "react";
-import { provider, inject } from "../../src";
-import {
-  DataContext,
-  UserService,
-  PostService,
-  CommentService
-} from "./Services";
+import React, { Component } from 'react';
+import { provider, inject } from '../../src';
+import { DataContext, UserService, PostService, CommentService } from './Services';
 
 @provider(DataContext)
 class App extends Component {
-  render() {
-    return (
-      <main>
-        <ProfilePage />
-        <PostsPage />
-      </main>
-    );
-  }
+	render() {
+		return (
+			<main>
+				<ProfilePage />
+				<PostsPage />
+			</main>
+		);
+	}
 }
 
 @provider(UserService)
 class ProfilePage extends Component {
-  @inject userService: UserService;
+	@inject userService: UserService;
 
-  render() {
-    return null;
-  }
+	render() {
+		return null;
+	}
 }
 
 @provider(PostService, CommentService)
 class PostsPage extends Component {
-  @inject postService: PostService;
+	@inject postService: PostService;
 
-  render() {
-    return <CommentsWidget />;
-  }
+	render() {
+		return <CommentsWidget />;
+	}
 }
 
 class CommentsWidget extends Component {
-  @inject commentsService: CommentService;
+	@inject commentsService: CommentService;
 
-  render() {
-    return null;
-  }
+	render() {
+		return null;
+	}
 }
 
 <App />;
