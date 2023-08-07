@@ -1,6 +1,6 @@
 {
 	"name": "react-ioc-immer",
-	"version": "0.1.15",
+	"version": "0.1.16",
 	"description": "Hierarchical Dependency Injection for React with Immutable State Services",
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",

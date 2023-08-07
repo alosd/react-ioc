@@ -4,8 +4,16 @@ import { logNotFoundDependency } from './errors';
 import { Token } from './types';
 
 /* istanbul ignore next */
-export const INJECTOR: unique symbol = (typeof Symbol === 'function' ? Symbol() : '__injector__') as any;
-export const InjectedPromiseProp: unique symbol = (typeof Symbol === 'function' ? Symbol() : '_injected') as any;
+export const INJECTOR: unique symbol = Symbol();
+export const InjectedPromiseProp: unique symbol = Symbol();
+export const EXISING_BINDING: unique symbol = Symbol();
+
+export interface BindingMark {
+	[EXISING_BINDING]?: boolean;
+	pre?: () => void;
+	post?: (instance: any) => void;
+}
+export type BindingFunction = ((injector: Injector, postPromise: Promise<any>) => any) & BindingMark;
 
 export interface InjectedPromise<T> extends Promise<T> {
 	[InjectedPromiseProp]?: boolean;
@@ -30,7 +38,7 @@ if (__DEV__) {
 export abstract class Injector<P = {}> extends Component<P> {
 	_parent?: Injector;
 
-	_bindingMap!: Map<Token, Function>;
+	_bindingMap!: Map<Token, BindingFunction>;
 
 	_instanceMap!: Map<Token, Object>;
 
@@ -60,6 +68,16 @@ export function getInjector(target: Object) {
 	return undefined;
 }
 
+function getExistedBinding(injector: Injector | undefined, token: Token) {
+	while (injector) {
+		if (injector._bindingMap.has(token)) {
+			return injector;
+		}
+		injector = injector._parent;
+	}
+	return injector;
+}
+
 let currentInjector: Injector | null = null;
 
 /**
@@ -70,7 +88,7 @@ let currentInjector: Injector | null = null;
  * @param {Token} token Dependency injection token
  * @returns {Object} Resolved class instance
  */
-export function getInstance(injector: Injector | undefined, token: Token) {
+export function getInstance(injector: Injector | undefined, token: Token): Object | undefined {
 	if (registrationQueue.length > 0) {
 		registrationQueue.forEach(registration => {
 			registration();
@@ -91,19 +109,37 @@ export function getInstance(injector: Injector | undefined, token: Token) {
 			const prevInjector = currentInjector;
 			currentInjector = injector;
 			try {
+				if (binding[EXISING_BINDING]) {
+					const parentinjector = getExistedBinding(injector._parent, token);
+					if (parentinjector) {
+						return getInstance(parentinjector, token);
+					}
+				}
+
 				let resolver: (obj: Object) => void = () => {};
 				const _p = new Promise(r => {
 					resolver = r;
 				}) as InjectedPromise<any>;
 				_p[InjectedPromiseProp] = true;
 				injector._asyncInstanceMap.set(token, _p);
+				if (binding.pre) {
+					binding.pre();
+				}
+
 				instance = binding(injector, _p);
+
+				injector._instanceMap.set(token, instance);
+				injector._initInstance(instance);
+
+				if (binding.post) {
+					binding.post(instance);
+				}
+
 				resolver(instance);
 			} finally {
 				currentInjector = prevInjector;
 			}
-			injector._instanceMap.set(token, instance);
-			injector._initInstance(instance);
+
 			return instance;
 		}
 		injector = injector._parent;

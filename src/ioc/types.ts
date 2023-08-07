@@ -1,5 +1,5 @@
 export type Token = Function | Object | string | symbol;
-export type DefinitionObject = { token: Token; binding: Function };
+export type DefinitionObject = { token: Token; binding: Function; useExisting?: boolean };
 export type Definition = Function | [Function] | [Token, Function] | DefinitionObject;
 
 export type Constructor<T> = new (...args: any[]) => T;
@@ -56,21 +56,21 @@ export function isValidMetadata(arg: any): arg is Function {
 /**
  * @internal
  */
-export type InstancePromise<T extends new (...args: any) => any> =  T extends Constructor<infer C> ? Promise<C> : Promise<T>;
+export type InstancePromise<T extends new (...args: any) => any> = T extends Constructor<infer C> ? Promise<C> : Promise<T>;
 
 /**
  * @internal
  */
-export type PromisifyArray<T extends [any, ...any[]]> = [  
-  InstancePromise<T[0]>,
-  InstancePromise<T[1]>,
-  InstancePromise<T[2]>,
-  InstancePromise<T[3]>,
-  InstancePromise<T[4]>,
-  InstancePromise<T[5]>,
-  InstancePromise<T[6]>,
-  InstancePromise<T[7]>,
-  InstancePromise<T[8]>,
-  InstancePromise<T[9]>,
-  InstancePromise<T[10]>
+export type PromisifyArray<T extends [any, ...any[]]> = [
+	InstancePromise<T[0]>,
+	InstancePromise<T[1]>,
+	InstancePromise<T[2]>,
+	InstancePromise<T[3]>,
+	InstancePromise<T[4]>,
+	InstancePromise<T[5]>,
+	InstancePromise<T[6]>,
+	InstancePromise<T[7]>,
+	InstancePromise<T[8]>,
+	InstancePromise<T[9]>,
+	InstancePromise<T[10]>
 ];

@@ -1,13 +1,14 @@
-import { INJECTOR, getInstance, Injector } from './injector';
+import { INJECTOR, getInstance, Injector, BindingFunction as BindingFunctionI, EXISING_BINDING } from './injector';
 import { isFunction, isToken, Token, Constructor, Definition, DefinitionObject, PromisifyArray } from './types';
 import { logIncorrectBinding, logError, getDebugName } from './errors';
 
-const IS_BINDING: unique symbol = (typeof Symbol === 'function' ? Symbol() : '__binding__') as any;
+const IS_BINDING: unique symbol = Symbol();
+
 interface BindingMark {
 	[IS_BINDING]?: boolean;
 }
-type BindingFunction = ((injector: Injector, postPromise: Promise<any>) => any) & BindingMark;
 
+export type BindingFunction = BindingFunctionI & BindingMark;
 interface InjectedInstance {
 	[INJECTOR]?: Injector;
 }
@@ -62,20 +63,26 @@ export function toFactory(depsOrFactory?: any, factory?: any) {
 	);
 }
 
-toClass.prePost = (fn: Function, pre?: Function, post?: Function) => {
-	return asBinding((injector, p) => {
-		if (pre) {
-			pre();
-		}
-		const res = fn(injector);
-
-		if (post) {
-			post(res, p);
-		}
-
-		return res;
-	});
-};
+export function configureBinding(
+	fn: BindingFunction,
+	options?: {
+		pre?: () => void;
+		post?: (instance: any) => void;
+		useExisting?: boolean;
+	}
+) {
+	const { pre, post, useExisting } = options || {};
+	if (pre) {
+		fn.pre = pre;
+	}
+	if (post) {
+		fn.post = post;
+	}
+	if (typeof useExisting == 'boolean') {
+		fn[EXISING_BINDING] = useExisting;
+	}
+	return fn;
+}
 
 export function toAsyncFactory<T extends [any, ...any[]]>(deps: { [K in keyof T]: Constructor<T[K]> | Token }, factory: (...args: PromisifyArray<T>) => any) {
 	return asBinding(injector => factory(...(deps.map((token: Token) => Promise.resolve(getInstance(injector, token))) as PromisifyArray<T>)));
@@ -126,7 +133,8 @@ function asBinding(binding: BindingFunction): Function {
 export function addBindings(bindingMap: Map<Token, Function>, definitions: Definition[]) {
 	definitions.forEach(definition => {
 		let token, binding;
-		if (typeof definition == 'object' && (definition as DefinitionObject).token && (definition as DefinitionObject).binding) {
+		const isDef = typeof definition == 'object' && (definition as DefinitionObject).token && (definition as DefinitionObject).binding;
+		if (isDef) {
 			token = (definition as DefinitionObject).token;
 			binding = (definition as DefinitionObject).binding;
 		}
@@ -142,5 +150,8 @@ export function addBindings(bindingMap: Map<Token, Function>, definitions: Defin
 		}
 		// @ts-ignore
 		bindingMap.set(token, binding[IS_BINDING] ? binding : toClass(binding));
+		if (isDef && typeof (definition as DefinitionObject).useExisting === 'boolean') {
+			(bindingMap.get(token) as BindingFunction)[EXISING_BINDING] = (definition as DefinitionObject).useExisting;
+		}
 	});
 }

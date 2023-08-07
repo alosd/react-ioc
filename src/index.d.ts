@@ -18,7 +18,7 @@ type PromisifyArray<T extends [any, ...any[]]> = [
 	InstancePromise<T[10]>
 ];
 
-export type DefinitionObject = { token: Token; binding: Function };
+export type DefinitionObject = { token: Token; binding: Function; useExisting?: boolean };
 export type Definition = Function | [Function] | [Token, Function] | DefinitionObject;
 type Provider = {
 	/**
@@ -97,13 +97,13 @@ export declare function useInstance<T>(token: Constructor<T> | Token): T;
  */
 export declare function useInstances<T extends [...any[]]>(...tokens: { [K in keyof T]: Constructor<T[K]> | Token }): T;
 
-type prePost = (fn: Function, pre?: Function, post?: (instance: any, promiseInstance: Promise<any>) => void) => Function;
+export declare function configureBinding<T>(binding: T, options?: { pre?: Function; post?: (instance: any) => void; useExisting?: boolean }): T;
 /**
  * Bind dependency to specified class.
  * @param cosntructor Constructor
  * @returns Dependency resolver
  */
-export declare const toClass: ((cosntructor: Constructor<any>) => Function) & { prePost: prePost };
+export declare const toClass: (cosntructor: Constructor<any>) => Function;
 
 /**
  * Bind dependency to specified value.

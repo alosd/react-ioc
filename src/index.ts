@@ -12,7 +12,8 @@ export {
 	toAsyncFactory,
 	toValue,
 	useInstance,
-	useInstances
+	useInstances,
+	configureBinding
 } from './ioc';
 export { ComponentWithServices } from './componentWithService';
 export { LiteEventImpl } from './liteEvent';
