@@ -1,4 +1,4 @@
-import { INJECTOR, getInstance, Injector, BindingFunction as BindingFunctionI, EXISING_BINDING } from './injector';
+import { INJECTOR, getInstance, Injector, BindingFunction as BindingFunctionI, EXISING_BINDING, AUTO_BINDING } from './injector';
 import { isFunction, isToken, Token, Constructor, Definition, DefinitionObject, PromisifyArray } from './types';
 import { logIncorrectBinding, logError, getDebugName } from './errors';
 
@@ -6,6 +6,7 @@ const IS_BINDING: unique symbol = Symbol();
 
 interface BindingMark {
 	[IS_BINDING]?: boolean;
+	[AUTO_BINDING]?: boolean;
 }
 
 export type BindingFunction = BindingFunctionI & BindingMark;
@@ -137,8 +138,7 @@ export function addBindings(bindingMap: Map<Token, Function>, definitions: Defin
 		if (isDef) {
 			token = (definition as DefinitionObject).token;
 			binding = (definition as DefinitionObject).binding;
-		}
-		if (Array.isArray(definition)) {
+		} else if (Array.isArray(definition)) {
 			[token, binding = token] = definition;
 		} else {
 			token = binding = definition;

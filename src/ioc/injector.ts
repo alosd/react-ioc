@@ -7,9 +7,11 @@ import { Token } from './types';
 export const INJECTOR: unique symbol = Symbol();
 export const InjectedPromiseProp: unique symbol = Symbol();
 export const EXISING_BINDING: unique symbol = Symbol();
+export const AUTO_BINDING: unique symbol = Symbol();
 
 export interface BindingMark {
 	[EXISING_BINDING]?: boolean;
+	[AUTO_BINDING]?: boolean;
 	pre?: () => void;
 	post?: (instance: any) => void;
 }
@@ -46,6 +48,8 @@ export abstract class Injector<P = {}> extends Component<P> {
 
 	_childNotifications = new LiteEventImpl();
 
+	_autoFactory?: (token: Token) => void;
+
 	abstract _initInstance(instance: Object): void;
 }
 
@@ -68,7 +72,7 @@ export function getInjector(target: Object) {
 	return undefined;
 }
 
-function getExistedBinding(injector: Injector | undefined, token: Token) {
+export function getExistedBinding(injector: Injector | undefined, token: Token) {
 	while (injector) {
 		if (injector._bindingMap.has(token)) {
 			return injector;
@@ -128,6 +132,11 @@ export function getInstance(injector: Injector | undefined, token: Token): Objec
 
 				instance = binding(injector, _p);
 
+				if (instance === undefined && binding[AUTO_BINDING]) {
+					injector = injector._parent;
+					continue;
+				}
+
 				injector._instanceMap.set(token, instance);
 				injector._initInstance(instance);
 
@@ -141,6 +150,14 @@ export function getInstance(injector: Injector | undefined, token: Token): Objec
 			}
 
 			return instance;
+		} else {
+			if (injector._autoFactory) {
+				const parentinjector = getExistedBinding(injector._parent, token);
+				if (!parentinjector) {
+					injector._autoFactory(token);
+					continue;
+				}
+			}
 		}
 		injector = injector._parent;
 	}

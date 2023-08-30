@@ -2813,13 +2813,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^6.0.9":
-  version: 6.0.9
-  resolution: "immer@npm:6.0.9"
-  checksum: e3e802ec076a1bbcff63910b3b3713c4aac3d934edeb4112ae2ea03223a7a5ad998b31f4ac8f055bca630f07aa6790f9fd868b601c11a34c2b1b1f4ebf0b20c0
-  languageName: node
-  linkType: hard
-
 "import-fresh@npm:^2.0.0":
   version: 2.0.0
   resolution: "import-fresh@npm:2.0.0"
@@ -5592,7 +5585,6 @@ __metadata:
     deepmerge: ^3.0.0
     hoist-non-react-statics: ^3.3.0
     husky: ^1.2.0
-    immer: ^6.0.9
     jest: ^23.6.0
     lint-staged: ^8.1.0
     prettier: ^1.15.3
@@ -5611,6 +5603,8 @@ __metadata:
     ts-jest: ^23.10.5
     tslib: ^2.4.0
     typescript: ^4.7.2
+  peerDependencies:
+    immer: ^6.0.9
   languageName: unknown
   linkType: soft
 

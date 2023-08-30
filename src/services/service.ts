@@ -1,3 +1,4 @@
+//@ts-ignore
 import { Draft, createDraft, finishDraft, immerable } from 'immer';
 import { logError } from '../ioc/errors';
 import { InjectedService } from '../ioc/provider';
@@ -94,6 +95,7 @@ export abstract class ImmutableService extends InjectedService {
 		super();
 		// @ts-ignore
 		this[STORES] = this[STORES] ?? [];
+		// @ts-ignore
 		this[immerable] = true;
 		this[PROVIDER] = new MutationProvider(this);
 	}

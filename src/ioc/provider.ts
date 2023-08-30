@@ -1,6 +1,6 @@
 import { createElement, ComponentType, ComponentClass, ReactNode } from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { Injector, InjectorContext, registrationQueue } from './injector';
+import { AUTO_BINDING, BindingFunction, Injector, InjectorContext, registrationQueue } from './injector';
 import { addBindings } from './bindings';
 import { isObject, isFunction, Definition, Token } from './types';
 import { logError, getDebugName } from './errors';
@@ -25,14 +25,38 @@ export abstract class InjectedService {
 	[Initialized]?: boolean;
 	abstract initProvider(refresh: () => void): void;
 }
+
+type ProviderOptions = {
+	autoCreateBinding: (token: Token) => BindingFunction;
+};
+
 /**
  * Decorator or HOC that register dependency injection bindings
  * in scope of decorated class
  * @param definitions Dependency injection configuration
  * @returns Decorator or HOC
  */
-export const provider: (...definitions: Definition[]) => <P = {}>(target: ComponentType<P>) => ProviderMixin<ComponentType<P>> = (...definitions) => Wrapped => {
-	const bindingMap = new Map<Token, Function>();
+
+export const provider: (...args: any[]) => <P = {}>(target: ComponentType<P>) => ProviderMixin<ComponentType<P>> = (...args: any[]) => Wrapped => {
+	let options: ProviderOptions;
+	let definitions: Definition[];
+	[options, ...definitions] = args;
+	if (typeof options != 'object' || !options.autoCreateBinding) {
+		[...definitions] = args;
+		options = {} as any;
+	}
+
+	const bindingMap = new Map<Token, BindingFunction>();
+
+	if (options.autoCreateBinding) {
+		const _autoBind = options.autoCreateBinding;
+		options.autoCreateBinding = token => {
+			const fn = _autoBind(token);
+			fn[AUTO_BINDING] = true;
+			addBindings(bindingMap, [{ token, binding: fn }]);
+			return null as any;
+		};
+	}
 
 	addBindings(bindingMap, definitions);
 
@@ -40,7 +64,8 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 		_parent = (this.context as any)?.injector as Injector;
 		_bindingMap = bindingMap;
 		_instanceMap = new Map();
-        _asyncInstanceMap = new Map();
+		_asyncInstanceMap = new Map();
+		_autoFactory = options.autoCreateBinding;
 		state = { injector: this };
 
 		_initInstance(instance: Object) {
@@ -98,7 +123,7 @@ export const provider: (...definitions: Definition[]) => <P = {}>(target: Compon
 	}
 
 	// static fields from component should be visible on the generated Consumer
-	return hoistNonReactStatics(Provider as unknown as ComponentType<any>, Wrapped) as any;
+	return hoistNonReactStatics((Provider as unknown) as ComponentType<any>, Wrapped) as any;
 };
 
 /**

@@ -1,12 +1,12 @@
 import { isFunction, isObject, isReactComponent, Token } from './types';
-import { FunctionComponent, Component } from 'react';
+import { ComponentType, ComponentClass, Component } from 'react';
 
 /**
  * @internal
  */
-export function getDebugName(value: FunctionComponent | Component | Object) {
+export function getDebugName(value: ComponentType | Component | Object) {
 	if (isFunction(value)) {
-		return String(value.displayName || value.name);
+		return String((value as ComponentClass).displayName || value.name);
 	}
 	if (isObject(value) && isFunction(value.constructor)) {
 		return String(value.constructor.name);

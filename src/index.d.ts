@@ -48,6 +48,11 @@ export declare const InjectorContext: Context<Function>;
  * @param definitions Dependency injection configuration
  * @returns Decorator or HOC
  */
+type BindingFunction = Function;
+export type ProviderOptions = {
+	autoCreateBinding: (token: Token, resolve: (token: Token) => any) => BindingFunction | undefined;
+};
+export declare function provider(options: ProviderOptions, ...definitions: Definition[]): <T extends Function>(target: T) => ProviderMixin<T>;
 export declare function provider(...definitions: Definition[]): <T extends Function>(target: T) => ProviderMixin<T>;
 
 /**
