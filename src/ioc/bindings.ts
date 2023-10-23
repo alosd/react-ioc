@@ -1,5 +1,5 @@
 import { INJECTOR, getInstance, Injector, BindingFunction as BindingFunctionI, EXISING_BINDING, AUTO_BINDING } from './injector';
-import { isFunction, isToken, Token, Constructor, Definition, DefinitionObject, PromisifyArray } from './types';
+import { isFunction, isToken, Token, Constructor, Definition, DefinitionObject, PromisifyArray, isObject } from './types';
 import { logIncorrectBinding, logError, getDebugName } from './errors';
 
 const IS_BINDING: unique symbol = Symbol();
@@ -60,7 +60,15 @@ export function toFactory(depsOrFactory?: any, factory?: any) {
 		}
 	}
 	return asBinding(
-		factory ? injector => factory(...depsOrFactory.map((token: Token) => getInstance(injector, token))) : injector => depsOrFactory((token: Token) => getInstance(injector, token))
+		injector=>{
+            const instance = factory ? factory(...depsOrFactory.map((token: Token) => getInstance(injector, token))) :  depsOrFactory((token: Token) => getInstance(injector, token));
+            if (isObject(instance)){
+                if (!instance[INJECTOR]) {
+                    instance[INJECTOR] = injector;
+                } 
+            }
+            return instance;
+        }	
 	);
 }
 
@@ -99,7 +107,14 @@ export function toValue(value: any) {
 			logError(`Please specify some value`);
 		}
 	}
-	return asBinding(() => value);
+	return  asBinding((injector) => {
+		if (isObject(value)){
+            if (!value[INJECTOR]) {
+                value[INJECTOR] = injector;
+            } 
+        }
+        return value;
+	    });
 }
 
 /**
