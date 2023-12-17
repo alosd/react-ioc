@@ -1,7 +1,7 @@
 import { createElement, ComponentType, ComponentClass, ReactNode } from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { AUTO_BINDING, BindingFunction, Injector, InjectorContext, registrationQueue, getInstance } from './injector';
-import { addBindings } from './bindings';
+import { addBindings, toValue } from './bindings';
 import { isObject, isFunction, Definition, Token } from './types';
 import { logError, getDebugName } from './errors';
 
@@ -52,6 +52,13 @@ export const provider: (...args: any[]) => <P = {}>(target: ComponentType<P>) =>
 		const _autoBind = options.autoCreateBinding;
 		options.autoCreateBinding = token => {
 			const fn = _autoBind(token);
+			if (__DEV__) {
+				if (fn == null) {
+					logError('auto binding not provided for token:' + getDebugName(token));
+					addBindings(bindingMap, [{ token, binding: toValue(null) }]);
+					return;
+				}
+			}
 			fn[AUTO_BINDING] = true;
 			addBindings(bindingMap, [{ token, binding: fn }]);
 			return null as any;
@@ -164,6 +171,13 @@ export function serverSideProvider(...args: any[]) {
 		const _autoBind = options.autoCreateBinding;
 		options.autoCreateBinding = token => {
 			const fn = _autoBind(token);
+			if (__DEV__) {
+				if (fn == null) {
+					logError('auto binding not provided for token:' + getDebugName(token));
+					addBindings(bindingMap, [{ token, binding: toValue(null) }]);
+					return;
+				}
+			}
 			fn[AUTO_BINDING] = true;
 			addBindings(bindingMap, [{ token, binding: fn }]);
 			return null as any;
@@ -174,7 +188,6 @@ export function serverSideProvider(...args: any[]) {
 	class Provider extends Injector {
 		_initInstance() {}
 		constructor() {
-			var _a;
 			super({});
 			this._bindingMap = bindingMap;
 			this._instanceMap = new Map();

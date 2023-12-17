@@ -13,7 +13,8 @@ export {
 	toValue,
 	useInstance,
 	useInstances,
-	configureBinding
+	configureBinding,
+	serverSideProvider
 } from './ioc';
 export { ComponentWithServices } from './componentWithService';
 export { LiteEventImpl } from './liteEvent';
