@@ -1,6 +1,6 @@
 import { createElement, ComponentType, ComponentClass, ReactNode } from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-import { AUTO_BINDING, BindingFunction, Injector, InjectorContext, registrationQueue } from './injector';
+import { AUTO_BINDING, BindingFunction, Injector, InjectorContext, registrationQueue, getInstance } from './injector';
 import { addBindings } from './bindings';
 import { isObject, isFunction, Definition, Token } from './types';
 import { logError, getDebugName } from './errors';
@@ -148,3 +148,41 @@ export const registerIn: <T extends Function>(getProvider: () => Provider, bindi
 	});
 	return constructor;
 };
+
+export function serverSideProvider(...args: any[]) {
+	let options: ProviderOptions;
+	let definitions: Definition[];
+	[options, ...definitions] = args;
+	if (typeof options != 'object' || !options.autoCreateBinding) {
+		[...definitions] = args;
+		options = {} as any;
+	}
+
+	const bindingMap = new Map<Token, BindingFunction>();
+
+	if (options.autoCreateBinding) {
+		const _autoBind = options.autoCreateBinding;
+		options.autoCreateBinding = token => {
+			const fn = _autoBind(token);
+			fn[AUTO_BINDING] = true;
+			addBindings(bindingMap, [{ token, binding: fn }]);
+			return null as any;
+		};
+	}
+
+	addBindings(bindingMap, definitions);
+	class Provider extends Injector {
+		_initInstance() {}
+		constructor() {
+			var _a;
+			super({});
+			this._bindingMap = bindingMap;
+			this._instanceMap = new Map();
+			this._asyncInstanceMap = new Map();
+			this._autoFactory = options.autoCreateBinding;
+		}
+	}
+	const prov = new Provider();
+
+	return (token: Token) => getInstance(prov, token);
+}

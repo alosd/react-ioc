@@ -187,3 +187,6 @@ export declare class LiteEventImpl<T = void> implements LiteEvent<T> {
 	off(handler: ActionsType<T>): void;
 	trigger(data: T): void;
 }
+
+export declare function serverSideProvider(options: ProviderOptions, ...definitions: Definition[]): <T>(token: Constructor<T> | Token) => T;
+export declare function serverSideProvider(...definitions: Definition[]): <T>(token: Constructor<T> | Token) => T;

@@ -69,7 +69,7 @@ export function getInjector(target: Object) {
 		(target as InjectedInstance)[INJECTOR] = injector;
 		return injector;
 	}
-	return undefined;
+	return injector;
 }
 
 export function getExistedBinding(injector: Injector | undefined, token: Token) {
